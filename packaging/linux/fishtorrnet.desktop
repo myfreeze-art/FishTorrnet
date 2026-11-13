@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=FishTorrnet
+GenericName=BitTorrent Client
+GenericName[ru]=BitTorrent-клиент
+Comment=Fast and honest BitTorrent client
+Comment[ru]=Быстрый и честный BitTorrent-клиент
+Exec={{exec}} %U
+Icon={{icon}}
+Terminal=false
+Categories=Network;FileTransfer;P2P;
+Keywords=torrent;bittorrent;magnet;download;p2p;
+MimeType=application/x-bittorrent;x-scheme-handler/magnet;
+StartupWMClass=fishtorrnet

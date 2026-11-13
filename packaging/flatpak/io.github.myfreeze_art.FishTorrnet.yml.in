@@ -1,0 +1,34 @@
+id: io.github.myfreeze_art.FishTorrnet
+runtime: org.gnome.Platform
+runtime-version: "47"
+sdk: org.gnome.Sdk
+command: fishtorrnet
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+  - --filesystem=xdg-download
+modules:
+  - name: fishtorrnet
+    buildsystem: simple
+    sources:
+      - type: file
+        url: https://github.com/myfreeze-art/FishTorrnet/releases/download/v{{VERSION}}/FishTorrnet_{{VERSION}}_amd64.deb
+        sha256: {{SHA_DEB}}
+        dest-filename: fishtorrnet.deb
+        only-arches:
+          - x86_64
+      - type: file
+        path: io.github.myfreeze_art.FishTorrnet.metainfo.xml
+    build-commands:
+      - ar -x fishtorrnet.deb
+      - tar -xzf data.tar.gz
+      - install -Dm755 usr/bin/fishtorrnet /app/bin/fishtorrnet
+      - install -Dm644 usr/share/applications/FishTorrnet.desktop /app/share/applications/io.github.myfreeze_art.FishTorrnet.desktop
+      - desktop-file-edit --set-icon=io.github.myfreeze_art.FishTorrnet /app/share/applications/io.github.myfreeze_art.FishTorrnet.desktop
+      - install -Dm644 usr/share/icons/hicolor/32x32/apps/fishtorrnet.png /app/share/icons/hicolor/32x32/apps/io.github.myfreeze_art.FishTorrnet.png
+      - install -Dm644 usr/share/icons/hicolor/128x128/apps/fishtorrnet.png /app/share/icons/hicolor/128x128/apps/io.github.myfreeze_art.FishTorrnet.png
+      - install -Dm644 usr/share/icons/hicolor/256x256@2/apps/fishtorrnet.png /app/share/icons/hicolor/256x256/apps/io.github.myfreeze_art.FishTorrnet.png
+      - install -Dm644 io.github.myfreeze_art.FishTorrnet.metainfo.xml /app/share/metainfo/io.github.myfreeze_art.FishTorrnet.metainfo.xml

@@ -4,10 +4,29 @@ on:
   push:
     tags: ["v*"]
 
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  TAG: ${{ github.ref_name }}
+
 jobs:
-  build:
-    permissions:
-      contents: write
+  create-release:
+    runs-on: ubuntu-24.04
+    outputs:
+      id: ${{ steps.release.outputs.id }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: release
+        run: |
+          gh release create "$TAG" --draft --verify-tag \
+            --title "FishTorrnet $TAG" --notes-file packaging/release-notes.md
+          id=$(gh api "repos/${{ github.repository }}/releases" --jq ".[] | select(.tag_name == \"$TAG\") | .id" | head -n1)
+          echo "id=$id" >> "$GITHUB_OUTPUT"
+
+  desktop:
+    needs: create-release
     strategy:
       fail-fast: false
       matrix:
@@ -41,21 +60,30 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: ${{ github.ref_name }}
-          releaseName: FishTorrnet ${{ github.ref_name }}
-          releaseBody: See the assets below to download FishTorrnet for your system.
-          releaseDraft: true
+          releaseId: ${{ needs.create-release.outputs.id }}
           args: ${{ matrix.args }}
+      - name: Microsoft Store package
+        if: matrix.platform == 'windows-latest'
+        shell: pwsh
+        env:
+          MSIX_IDENTITY_NAME: ${{ vars.MSIX_IDENTITY_NAME }}
+          MSIX_PUBLISHER: ${{ vars.MSIX_PUBLISHER }}
+          MSIX_PUBLISHER_DISPLAY_NAME: ${{ vars.MSIX_PUBLISHER_DISPLAY_NAME }}
+        run: |
+          $package = ./packaging/msix/build.ps1 -Version $env:TAG
+          gh release upload $env:TAG $package --clobber
 
   server:
-    permissions:
-      contents: write
+    needs: create-release
     strategy:
       fail-fast: false
       matrix:
         include:
           - os: ubuntu-22.04
             name: fishtorrnet-server-linux-x86_64
+            file: fishtorrnet-server
+          - os: ubuntu-22.04-arm
+            name: fishtorrnet-server-linux-arm64
             file: fishtorrnet-server
           - os: windows-latest
             name: fishtorrnet-server-windows-x86_64.exe
@@ -76,10 +104,20 @@ jobs:
         run: |
           npm ci --prefix ui
           npm --prefix ui run build
-          cargo build --release -p fishtorrnet-server
-          cp target/release/${{ matrix.file }} ${{ matrix.name }}
-      - uses: softprops/action-gh-release@v2
-        with:
-          draft: true
-          tag_name: ${{ github.ref_name }}
-          files: ${{ matrix.name }}
+          cargo build --release --locked -p fishtorrnet-server
+          cp "target/release/${{ matrix.file }}" "${{ matrix.name }}"
+          gh release upload "$TAG" "${{ matrix.name }}" --clobber
+
+  checksums:
+    needs: [desktop, server]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checksums and store manifests
+        run: |
+          mkdir assets
+          gh release download "$TAG" --dir assets --skip-existing
+          (cd assets && rm -f SHA256SUMS.txt && sha256sum * > ../SHA256SUMS.txt)
+          python3 packaging/render.py --version "$TAG" --assets assets --out store
+          (cd store && zip -qr "../fishtorrnet-${TAG}-store-manifests.zip" .)
+          gh release upload "$TAG" SHA256SUMS.txt "fishtorrnet-${TAG}-store-manifests.zip" --clobber

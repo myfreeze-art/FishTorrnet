@@ -84,6 +84,7 @@ async fn download_stream_and_verify() {
         desktop: false,
         folder_picker: None,
         restart: None,
+        download_dir: None,
     })
     .await
     .unwrap();
@@ -92,6 +93,7 @@ async fn download_stream_and_verify() {
         desktop: true,
         folder_picker: None,
         restart: None,
+        download_dir: None,
     })
     .await
     .unwrap();

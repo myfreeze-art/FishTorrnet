@@ -20,7 +20,21 @@
 
 ## Установка
 
-Готовые сборки для Windows, macOS и Linux появляются на странице [Releases](https://github.com/myfreeze-art/FishTorrnet/releases) после публикации версии (тег `v*`).
+Готовые сборки лежат на странице [Releases](https://github.com/myfreeze-art/FishTorrnet/releases).
+
+| Система | Как установить |
+| --- | --- |
+| Windows | `FishTorrnet_*_x64-setup.exe` из выпуска или `winget install myfreeze-art.FishTorrnet` |
+| macOS | `FishTorrnet_*_universal.dmg` из выпуска |
+| Ubuntu, Debian | `.deb` из выпуска |
+| Fedora, openSUSE | `.rpm` из выпуска |
+| Arch Linux | `yay -S fishtorrnet-bin` |
+| Любой Linux | `.AppImage` из выпуска |
+| Сервер или NAS | `docker run -p 8787:8787 -v ./downloads:/downloads ghcr.io/myfreeze-art/fishtorrnet` |
+
+Установщики не подписаны платным сертификатом, поэтому при первом запуске система предупредит один раз. В Windows нажмите «Подробнее», затем «Выполнить в любом случае». В macOS откройте «Системные настройки → Конфиденциальность и безопасность» и нажмите «Всё равно открыть». Контрольные суммы всех файлов лежат в `SHA256SUMS.txt` в каждом выпуске.
+
+Как выпускать версии и публиковать программу в Microsoft Store, winget, AUR, Flathub и Docker, описано в [packaging/README.md](packaging/README.md).
 
 ## Сборка из исходников
 
@@ -48,7 +62,7 @@ npm run app:build
 npm ci --prefix ui
 npm --prefix ui run build
 cargo build --release -p fishtorrnet-server
-./target/release/fishtorrnet-server --listen 0.0.0.0:8787
+./target/release/fishtorrnet-server --listen 0.0.0.0:8787 --download-dir ~/Downloads/FishTorrnet
 ```
 
 Сервер напечатает ссылку с ключом доступа. Откройте её в браузере на любом устройстве в сети.
@@ -79,6 +93,7 @@ cargo test --workspace
 | `src-tauri` | Настольное приложение на Tauri: окно, выбор папки, magnet-ссылки и .torrent-файлы из системы |
 | `ui` | Интерфейс на React и TypeScript |
 | `assets` | Логотипы в SVG |
+| `packaging` | Описания для Microsoft Store, winget, AUR и Flathub, файл .desktop для Linux |
 | `vendor/librqbit-tracker-comms` | Копия модуля трекеров librqbit с запасным IPv4-сокетом для систем без IPv6 |
 
 Ядро и интерфейс общаются через HTTP API на `127.0.0.1`. Каждый запрос должен содержать ключ доступа в заголовке `x-fishtorrnet-token` или в параметре `t`. Действия с файлами на компьютере, например открыть папку, доступны только из окна самого приложения.

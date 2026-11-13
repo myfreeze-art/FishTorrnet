@@ -1,0 +1,12 @@
+services:
+  fishtorrnet:
+    image: ghcr.io/myfreeze-art/fishtorrnet:latest
+    container_name: fishtorrnet
+    restart: unless-stopped
+    ports:
+      - "8787:8787"
+      - "51420:51420/tcp"
+      - "51420:51420/udp"
+    volumes:
+      - ./config:/config
+      - ./downloads:/downloads

@@ -1,0 +1,19 @@
+pkgbase = fishtorrnet-bin
+	pkgdesc = Fast and honest BitTorrent client without ads or telemetry
+	pkgver = {{VERSION}}
+	pkgrel = 1
+	url = https://github.com/myfreeze-art/FishTorrnet
+	arch = x86_64
+	license = GPL-3.0-or-later
+	depends = webkit2gtk-4.1
+	depends = gtk3
+	depends = openssl
+	depends = hicolor-icon-theme
+	provides = fishtorrnet
+	conflicts = fishtorrnet
+	options = !debug
+	options = !strip
+	source = FishTorrnet_{{VERSION}}_amd64.deb::https://github.com/myfreeze-art/FishTorrnet/releases/download/v{{VERSION}}/FishTorrnet_{{VERSION}}_amd64.deb
+	sha256sums = {{SHA_DEB}}
+
+pkgname = fishtorrnet-bin
