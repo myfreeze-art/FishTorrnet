@@ -26,7 +26,9 @@ fn parse_args() -> anyhow::Result<Args> {
     let mut it = std::env::args().skip(1);
     while let Some(a) = it.next() {
         match a.as_str() {
-            "--config-dir" => args.config_dir = it.next().context("--config-dir needs a value")?.into(),
+            "--config-dir" => {
+                args.config_dir = it.next().context("--config-dir needs a value")?.into()
+            }
             "--listen" => {
                 args.listen = it
                     .next()

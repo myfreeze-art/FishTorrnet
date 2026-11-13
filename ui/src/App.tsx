@@ -44,7 +44,12 @@ export function App() {
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [focusId, setFocusId] = useState<number | null>(null);
-  const [adding, setAdding] = useState<AddSource | undefined>(undefined);
+  const [adding, setAddingRaw] = useState<AddSource | undefined>(undefined);
+  const [addSeq, setAddSeq] = useState(0);
+  const setAdding = useCallback((src: AddSource | undefined) => {
+    if (src !== undefined) setAddSeq((n) => n + 1);
+    setAddingRaw(src);
+  }, []);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [remoteOpen, setRemoteOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
@@ -113,15 +118,15 @@ export function App() {
     return () => clearInterval(t);
   }, [refresh]);
 
+  const inboxCount = state?.inbox ?? 0;
   useEffect(() => {
-    const url = new URL(window.location.href);
-    const add = url.searchParams.get("add");
-    if (add) {
-      url.searchParams.delete("add");
-      window.history.replaceState(null, "", url.pathname + url.search);
-      setAdding({ magnet: add });
-    }
-  }, []);
+    if (inboxCount === 0) return;
+    api.takeInbox().then(({ items }) => {
+      const last = items[items.length - 1];
+      if (last?.magnet) setAdding({ magnet: last.magnet });
+      else if (last?.torrent) setAdding({ torrent: last.torrent });
+    }, toast.error);
+  }, [inboxCount, setAdding, toast]);
 
   const torrents = state?.torrents ?? [];
   const visible = useMemo(() => {
@@ -434,6 +439,7 @@ export function App() {
 
       {adding !== undefined && (
         <AddDialog
+          key={addSeq}
           initial={adding}
           canPickFolder={!!state?.can_pick_folder}
           onClose={() => setAdding(undefined)}

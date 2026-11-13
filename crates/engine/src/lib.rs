@@ -16,11 +16,11 @@ use std::time::{Duration, Instant};
 
 use anyhow::Context;
 use librqbit::dht::DhtPersistenceConfig;
+use librqbit::limits::LimitsConfig;
 use librqbit::{
     Api, DhtSessionConfig, ListenerMode, ListenerOptions, Session, SessionOptions,
     SessionPersistenceConfig, generate_azereus_style,
 };
-use librqbit::limits::LimitsConfig;
 use tokio::net::TcpListener;
 
 use crate::guard::{Kind, Level};
@@ -45,6 +45,7 @@ pub struct Engine {
     pub restart: Option<RestartHook>,
     pub started: Instant,
     pub(crate) guard_cache: Mutex<HashMap<String, (Level, Kind)>>,
+    pub(crate) inbox: Mutex<Vec<serde_json::Value>>,
     config_dir: PathBuf,
     token: String,
     settings: RwLock<Settings>,
@@ -81,9 +82,8 @@ impl Engine {
             .with_context(|| format!("cannot create {}", config_dir.display()))?;
         let settings = Settings::load(&config_dir.join("settings.json"));
         let token = load_token(&config_dir.join("token"))?;
-        std::fs::create_dir_all(&settings.download_folder).with_context(|| {
-            format!("cannot create {}", settings.download_folder.display())
-        })?;
+        std::fs::create_dir_all(&settings.download_folder)
+            .with_context(|| format!("cannot create {}", settings.download_folder.display()))?;
 
         let folder = settings.download_folder.clone();
         let attempts = [
@@ -94,7 +94,12 @@ impl Engine {
         let mut last_err = None;
         let mut session = None;
         for (ipv4_only, port) in attempts {
-            match Session::new_with_opts(folder.clone(), session_options(&settings, &config_dir, ipv4_only, port)).await {
+            match Session::new_with_opts(
+                folder.clone(),
+                session_options(&settings, &config_dir, ipv4_only, port),
+            )
+            .await
+            {
                 Ok(s) => {
                     session = Some(s);
                     break;
@@ -121,11 +126,28 @@ impl Engine {
             restart: opts.restart,
             started: Instant::now(),
             guard_cache: Mutex::new(HashMap::new()),
+            inbox: Mutex::new(Vec::new()),
             config_dir,
             token,
             applied: settings.clone(),
             settings: RwLock::new(settings),
         }))
+    }
+
+    pub fn enqueue_magnet(&self, magnet: &str) {
+        self.inbox
+            .lock()
+            .unwrap()
+            .push(serde_json::json!({ "magnet": magnet }));
+    }
+
+    pub fn enqueue_torrent(&self, bytes: &[u8]) {
+        use base64::Engine as _;
+        let b64 = base64::engine::general_purpose::STANDARD.encode(bytes);
+        self.inbox
+            .lock()
+            .unwrap()
+            .push(serde_json::json!({ "torrent": b64 }));
     }
 
     pub fn session(&self) -> &Arc<Session> {
@@ -154,9 +176,8 @@ impl Engine {
 
     pub fn update_settings(&self, new: Settings) -> anyhow::Result<Settings> {
         new.validate()?;
-        std::fs::create_dir_all(&new.download_folder).with_context(|| {
-            format!("cannot create {}", new.download_folder.display())
-        })?;
+        std::fs::create_dir_all(&new.download_folder)
+            .with_context(|| format!("cannot create {}", new.download_folder.display()))?;
         new.save(&self.config_dir.join("settings.json"))?;
         let limits = &self.session().ratelimits;
         limits.set_download_bps(limit(new.download_limit_kib));
@@ -242,7 +263,12 @@ impl Engine {
     }
 }
 
-fn session_options(settings: &Settings, config_dir: &Path, ipv4_only: bool, port: u16) -> SessionOptions {
+fn session_options(
+    settings: &Settings,
+    config_dir: &Path,
+    ipv4_only: bool,
+    port: u16,
+) -> SessionOptions {
     let (major, minor, patch) = version_parts();
     let listen_addr: SocketAddr = if ipv4_only {
         (Ipv4Addr::UNSPECIFIED, port).into()
@@ -263,7 +289,11 @@ fn session_options(settings: &Settings, config_dir: &Path, ipv4_only: bool, port
         }),
         peer_id: Some(generate_azereus_style(*b"FT", (major, minor, patch, 0))),
         listen: Some(ListenerOptions {
-            mode: if settings.utp { ListenerMode::TcpAndUtp } else { ListenerMode::TcpOnly },
+            mode: if settings.utp {
+                ListenerMode::TcpAndUtp
+            } else {
+                ListenerMode::TcpOnly
+            },
             listen_addr,
             enable_upnp_port_forwarding: settings.upnp,
             ipv4_only,

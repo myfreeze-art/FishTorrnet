@@ -7,7 +7,7 @@ import { Dialog } from "./Dialog";
 import { isPlayable } from "./DetailsPanel";
 import { useToast } from "./Toasts";
 
-export type AddSource = { magnet: string } | { file: File } | null;
+export type AddSource = { magnet: string } | { file: File } | { torrent: string } | null;
 
 interface Props {
   initial: AddSource;
@@ -90,6 +90,7 @@ export function AddDialog({ initial, canPickFolder, onClose, onAdded, onShowExis
     if (started.current || !initial) return;
     started.current = true;
     if ("magnet" in initial) load({ magnet: initial.magnet });
+    else if ("torrent" in initial) load({ torrent: initial.torrent });
     else loadFile(initial.file);
   }, []);
 

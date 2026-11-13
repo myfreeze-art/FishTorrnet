@@ -121,9 +121,11 @@ mod tests {
     fn roundtrip() {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("settings.json");
-        let mut s = Settings::default();
-        s.listen_port = 40000;
-        s.theme = Theme::Dark;
+        let s = Settings {
+            listen_port: 40000,
+            theme: Theme::Dark,
+            ..Settings::default()
+        };
         s.save(&path).unwrap();
         assert_eq!(Settings::load(&path), s);
     }

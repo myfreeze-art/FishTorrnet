@@ -32,11 +32,18 @@ async fn call(engine: &std::sync::Arc<Engine>, req: Request<Body>) -> (StatusCod
         .insert(ConnectInfo(SocketAddr::from(([127, 0, 0, 1], 1))));
     let res = engine.router().oneshot(req).await.unwrap();
     let status = res.status();
-    let body = axum::body::to_bytes(res.into_body(), usize::MAX).await.unwrap();
+    let body = axum::body::to_bytes(res.into_body(), usize::MAX)
+        .await
+        .unwrap();
     (status, body.to_vec())
 }
 
-async fn json_call(engine: &std::sync::Arc<Engine>, method: &str, uri: &str, body: Option<Value>) -> Value {
+async fn json_call(
+    engine: &std::sync::Arc<Engine>,
+    method: &str,
+    uri: &str,
+    body: Option<Value>,
+) -> Value {
     let req = Request::builder()
         .method(method)
         .uri(uri)
@@ -45,7 +52,11 @@ async fn json_call(engine: &std::sync::Arc<Engine>, method: &str, uri: &str, bod
         .body(body.map(|b| Body::from(b.to_string())).unwrap_or_default())
         .unwrap();
     let (status, bytes) = call(engine, req).await;
-    assert!(status.is_success(), "{uri}: {status} {}", String::from_utf8_lossy(&bytes));
+    assert!(
+        status.is_success(),
+        "{uri}: {status} {}",
+        String::from_utf8_lossy(&bytes)
+    );
     serde_json::from_slice(&bytes).unwrap()
 }
 
@@ -62,7 +73,9 @@ async fn download_stream_and_verify() {
     write_settings(&seed_cfg, &seed_dl, 46101);
     write_settings(&leech_cfg, &leech_dl, 46102);
 
-    let data: Vec<u8> = (0..3 * 1024 * 1024u32).map(|i| (i.wrapping_mul(2654435761) >> 13) as u8).collect();
+    let data: Vec<u8> = (0..3 * 1024 * 1024u32)
+        .map(|i| (i.wrapping_mul(2654435761) >> 13) as u8)
+        .collect();
     let file = seed_dl.join("clip.mkv");
     std::fs::write(&file, &data).unwrap();
 
@@ -118,11 +131,23 @@ async fn download_stream_and_verify() {
     assert!(seeder.api.api_stats_v1(0.into()).unwrap().finished);
     let seed_port = seeder.session().announce_port().unwrap();
 
-    let unauthorized = Request::builder().uri("/api/state").body(Body::empty()).unwrap();
-    assert_eq!(call(&leecher, unauthorized).await.0, StatusCode::UNAUTHORIZED);
+    let unauthorized = Request::builder()
+        .uri("/api/state")
+        .body(Body::empty())
+        .unwrap();
+    assert_eq!(
+        call(&leecher, unauthorized).await.0,
+        StatusCode::UNAUTHORIZED
+    );
 
     let b64 = base64::engine::general_purpose::STANDARD.encode(&torrent);
-    let preview = json_call(&leecher, "POST", "/api/preview", Some(json!({ "torrent": b64 }))).await;
+    let preview = json_call(
+        &leecher,
+        "POST",
+        "/api/preview",
+        Some(json!({ "torrent": b64 })),
+    )
+    .await;
     assert_eq!(preview["name"], "clip.mkv");
     assert_eq!(preview["kind"], "video");
     assert_eq!(preview["report"]["level"], "safe");
@@ -156,7 +181,10 @@ async fn download_stream_and_verify() {
     let mut status = String::new();
     for _ in 0..300 {
         let st = json_call(&leecher, "GET", "/api/state", None).await;
-        status = st["torrents"][0]["status"].as_str().unwrap_or("").to_string();
+        status = st["torrents"][0]["status"]
+            .as_str()
+            .unwrap_or("")
+            .to_string();
         if status == "seeding" {
             break;
         }
@@ -165,7 +193,13 @@ async fn download_stream_and_verify() {
     assert_eq!(status, "seeding");
     assert_eq!(std::fs::read(leech_dl.join("clip.mkv")).unwrap(), data);
 
-    let pieces = json_call(&leecher, "GET", &format!("/api/torrents/{id}/pieces?buckets=16"), None).await;
+    let pieces = json_call(
+        &leecher,
+        "GET",
+        &format!("/api/torrents/{id}/pieces?buckets=16"),
+        None,
+    )
+    .await;
     assert_eq!(pieces["have"], pieces["total"]);
     assert_eq!(pieces["buckets"].as_array().unwrap().len(), 16);
 
@@ -176,7 +210,13 @@ async fn download_stream_and_verify() {
     assert_eq!(state["local"], true);
 
     json_call(&leecher, "POST", &format!("/api/torrents/{id}/pause"), None).await;
-    json_call(&leecher, "DELETE", &format!("/api/torrents/{id}?files=true"), None).await;
+    json_call(
+        &leecher,
+        "DELETE",
+        &format!("/api/torrents/{id}?files=true"),
+        None,
+    )
+    .await;
     let state = json_call(&leecher, "GET", "/api/state", None).await;
     assert!(state["torrents"].as_array().unwrap().is_empty());
     assert!(!leech_dl.join("clip.mkv").exists());

@@ -75,7 +75,9 @@ const DOCUMENT: &[&str] = &[
 ];
 const DISK_IMAGE: &[&str] = &["iso", "img"];
 const ARCHIVE: &[&str] = &["zip", "rar", "7z", "tar", "gz", "xz", "bz2", "zst"];
-const IMAGE: &[&str] = &["jpg", "jpeg", "png", "gif", "webp", "bmp", "nfo", "srt", "ass", "sub"];
+const IMAGE: &[&str] = &[
+    "jpg", "jpeg", "png", "gif", "webp", "bmp", "nfo", "srt", "ass", "sub",
+];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "lowercase")]
@@ -183,9 +185,10 @@ pub fn check<'a>(files: impl IntoIterator<Item = FileEntry<'a>>) -> Report {
     for f in &files {
         total_bytes += f.length;
         if let Some(e) = extension(f.path)
-            && (VIDEO.contains(&e.as_str()) || AUDIO.contains(&e.as_str())) {
-                media_bytes += f.length;
-            }
+            && (VIDEO.contains(&e.as_str()) || AUDIO.contains(&e.as_str()))
+        {
+            media_bytes += f.length;
+        }
     }
     let media_torrent = total_bytes > 0 && media_bytes * 10 >= total_bytes * 7;
 
@@ -361,9 +364,17 @@ mod tests {
         assert_eq!(kind_of("noext"), Kind::Other);
         assert_eq!(kind_of(".hidden"), Kind::Other);
         let k = dominant_kind(
-            [("a.mp3", 10u64), ("b.mp3", 10), ("cover.jpg", 100), ("x.pdf", 15)]
-                .iter()
-                .map(|(p, l)| FileEntry { path: p, length: *l }),
+            [
+                ("a.mp3", 10u64),
+                ("b.mp3", 10),
+                ("cover.jpg", 100),
+                ("x.pdf", 15),
+            ]
+            .iter()
+            .map(|(p, l)| FileEntry {
+                path: p,
+                length: *l,
+            }),
         );
         assert_eq!(k, Kind::Audio);
     }

@@ -53,7 +53,11 @@ pub fn sanitize(name: &str) -> String {
         })
         .collect();
     let cleaned = cleaned.trim().trim_matches('.').to_string();
-    if cleaned.is_empty() { "torrent".into() } else { cleaned }
+    if cleaned.is_empty() {
+        "torrent".into()
+    } else {
+        cleaned
+    }
 }
 
 pub fn default_dir(client: Client) -> Option<PathBuf> {
@@ -127,7 +131,11 @@ fn scan_qbittorrent(dir: &Path) -> anyhow::Result<Vec<Item>> {
             torrent,
             output_folder,
             paused,
-            source: path.file_name().unwrap_or_default().to_string_lossy().into_owned(),
+            source: path
+                .file_name()
+                .unwrap_or_default()
+                .to_string_lossy()
+                .into_owned(),
         });
     }
     Ok(out)
@@ -147,7 +155,11 @@ fn scan_utorrent(dir: &Path) -> anyhow::Result<Vec<Item>> {
             continue;
         }
         let file = Path::new(key);
-        let file = if file.is_absolute() { file.to_path_buf() } else { dir.join(file) };
+        let file = if file.is_absolute() {
+            file.to_path_buf()
+        } else {
+            dir.join(file)
+        };
         let Ok(torrent) = std::fs::read(&file) else {
             continue;
         };
@@ -200,7 +212,10 @@ mod tests {
     fn content_folders() {
         let base = Path::new("/data");
         assert_eq!(content_folder(base, &single()), PathBuf::from("/data"));
-        assert_eq!(content_folder(base, &multi()), PathBuf::from("/data/Folder"));
+        assert_eq!(
+            content_folder(base, &multi()),
+            PathBuf::from("/data/Folder")
+        );
     }
 
     #[test]
@@ -222,7 +237,10 @@ mod tests {
         let mut items = scan(Client::QBittorrent, dir.path()).unwrap();
         items.sort_by(|a, b| a.source.cmp(&b.source));
         assert_eq!(items.len(), 2);
-        assert_eq!(items[0].output_folder, Some(PathBuf::from("/srv/dl/Folder")));
+        assert_eq!(
+            items[0].output_folder,
+            Some(PathBuf::from("/srv/dl/Folder"))
+        );
         assert!(items[0].paused);
         assert_eq!(items[1].output_folder, None);
         assert!(!items[1].paused);

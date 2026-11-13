@@ -51,6 +51,7 @@ export interface AppState {
   local: boolean;
   can_pick_folder: boolean;
   can_restart: boolean;
+  inbox: number;
   theme: Theme;
   language: Language;
   upnp: boolean;
@@ -248,6 +249,7 @@ export const api = {
     request<ImportResult>("POST", "/api/import", { client, path }),
   pickFolder: () => request<{ path: string | null }>("POST", "/api/pick-folder"),
   restart: () => request<object>("POST", "/api/restart"),
+  takeInbox: () => request<{ items: { magnet?: string; torrent?: string }[] }>("POST", "/api/inbox"),
   preview: (src: { magnet?: string; torrent?: string }) => request<Preview>("POST", "/api/preview", src),
   add: (req: AddRequest) => request<{ id: number; info_hash: string }>("POST", "/api/add", req),
   pauseAll: () => request<object>("POST", "/api/pause-all"),

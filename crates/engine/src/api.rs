@@ -91,6 +91,7 @@ pub fn router(engine: Shared) -> Router {
         .route("/api/import", get(import_detect).post(import_run))
         .route("/api/pick-folder", post(pick_folder))
         .route("/api/restart", post(restart))
+        .route("/api/inbox", post(take_inbox))
         .route("/api/preview", post(preview))
         .route("/api/add", post(add))
         .route("/api/pause-all", post(pause_all))
@@ -151,7 +152,9 @@ fn num(v: &Value, path: &[&str]) -> f64 {
 }
 
 async fn state(State(e): State<Shared>, ConnectInfo(addr): ConnectInfo<SocketAddr>) -> R<Value> {
-    let list = e.api.api_torrent_list_ext(ApiTorrentListOpts { with_stats: true });
+    let list = e
+        .api
+        .api_torrent_list_ext(ApiTorrentListOpts { with_stats: true });
     let mut torrents: Vec<view::Summary> = list
         .torrents
         .iter()
@@ -188,6 +191,7 @@ async fn state(State(e): State<Shared>, ConnectInfo(addr): ConnectInfo<SocketAdd
         "local": is_local(&e, &addr),
         "can_pick_folder": is_local(&e, &addr) && e.folder_picker.is_some(),
         "can_restart": is_local(&e, &addr) && e.restart.is_some(),
+        "inbox": if is_local(&e, &addr) { e.inbox.lock().unwrap().len() } else { 0 },
         "theme": settings.theme,
         "language": settings.language,
         "upnp": settings.upnp,
@@ -200,7 +204,9 @@ async fn get_settings(State(e): State<Shared>) -> R<Settings> {
 
 async fn put_settings(State(e): State<Shared>, Json(s): Json<Settings>) -> R<Value> {
     let saved = e.update_settings(s)?;
-    Ok(Json(json!({ "settings": saved, "restart_required": e.restart_required() })))
+    Ok(Json(
+        json!({ "settings": saved, "restart_required": e.restart_required() }),
+    ))
 }
 
 async fn remote(State(e): State<Shared>) -> R<Value> {
@@ -246,7 +252,8 @@ impl Source {
         }
         let url = if m.len() == 40 && m.chars().all(|c| c.is_ascii_hexdigit()) {
             format!("magnet:?xt=urn:btih:{m}")
-        } else if m.starts_with("magnet:") || m.starts_with("http://") || m.starts_with("https://") {
+        } else if m.starts_with("magnet:") || m.starts_with("http://") || m.starts_with("https://")
+        {
             m.to_string()
         } else {
             return Err(bad("unsupported link"));
@@ -265,7 +272,12 @@ async fn preview(State(e): State<Shared>, Json(src): Json<Source>) -> R<Value> {
     };
     let resp = tokio::time::timeout(METADATA_TIMEOUT, e.session().add_torrent(add, Some(opts)))
         .await
-        .map_err(|_| ApiError(StatusCode::GATEWAY_TIMEOUT, "metadata not received in time".into()))??;
+        .map_err(|_| {
+            ApiError(
+                StatusCode::GATEWAY_TIMEOUT,
+                "metadata not received in time".into(),
+            )
+        })??;
     let (info_hash, torrent_bytes, peers) = match resp {
         AddTorrentResponse::ListOnly(r) => (r.info_hash, r.torrent_bytes, r.seen_peers),
         AddTorrentResponse::AlreadyManaged(id, h) => {
@@ -364,8 +376,15 @@ async fn add(State(e): State<Shared>, Json(req): Json<AddRequest>) -> R<Value> {
     let add = req.source.into_add()?;
     let resp = tokio::time::timeout(METADATA_TIMEOUT, e.api.api_add_torrent(add, Some(opts)))
         .await
-        .map_err(|_| ApiError(StatusCode::GATEWAY_TIMEOUT, "metadata not received in time".into()))??;
-    Ok(Json(json!({ "id": resp.id, "info_hash": resp.details.info_hash })))
+        .map_err(|_| {
+            ApiError(
+                StatusCode::GATEWAY_TIMEOUT,
+                "metadata not received in time".into(),
+            )
+        })??;
+    Ok(Json(
+        json!({ "id": resp.id, "info_hash": resp.details.info_hash }),
+    ))
 }
 
 fn all_ids(e: &Engine) -> Vec<usize> {
@@ -430,7 +449,11 @@ struct PiecesQuery {
     buckets: Option<usize>,
 }
 
-async fn pieces(State(e): State<Shared>, Path(id): Path<String>, Query(q): Query<PiecesQuery>) -> R<Value> {
+async fn pieces(
+    State(e): State<Shared>,
+    Path(id): Path<String>,
+    Query(q): Query<PiecesQuery>,
+) -> R<Value> {
     let id = parse_id(&id)?;
     let buckets = q.buckets.unwrap_or(120).clamp(8, 1000);
     let (bf, total) = match e.api.api_dump_haves(id) {
@@ -449,7 +472,9 @@ async fn pieces(State(e): State<Shared>, Path(id): Path<String>, Query(q): Query
             out.push((got as f64 / (to - from) as f64 * 100.0).round() as u8);
         }
     }
-    Ok(Json(json!({ "total": total, "have": have, "buckets": out })))
+    Ok(Json(
+        json!({ "total": total, "have": have, "buckets": out }),
+    ))
 }
 
 async fn pause(State(e): State<Shared>, Path(id): Path<String>) -> R<Value> {
@@ -468,7 +493,11 @@ struct RemoveQuery {
     files: bool,
 }
 
-async fn remove(State(e): State<Shared>, Path(id): Path<String>, Query(q): Query<RemoveQuery>) -> R<Value> {
+async fn remove(
+    State(e): State<Shared>,
+    Path(id): Path<String>,
+    Query(q): Query<RemoveQuery>,
+) -> R<Value> {
     let id = parse_id(&id)?;
     if let Ok(d) = e.api.api_torrent_details(id) {
         e.guard_cache.lock().unwrap().remove(&d.info_hash);
@@ -486,7 +515,11 @@ struct FilesRequest {
     files: Vec<usize>,
 }
 
-async fn set_files(State(e): State<Shared>, Path(id): Path<String>, Json(req): Json<FilesRequest>) -> R<Value> {
+async fn set_files(
+    State(e): State<Shared>,
+    Path(id): Path<String>,
+    Json(req): Json<FilesRequest>,
+) -> R<Value> {
     if req.files.is_empty() {
         return Err(bad("select at least one file"));
     }
@@ -509,7 +542,10 @@ async fn open(
     Json(req): Json<OpenRequest>,
 ) -> R<Value> {
     if !is_local(&e, &addr) {
-        return Err(ApiError(StatusCode::FORBIDDEN, "not available in remote mode".into()));
+        return Err(ApiError(
+            StatusCode::FORBIDDEN,
+            "not available in remote mode".into(),
+        ));
     }
     let d = e.api.api_torrent_details(parse_id(&id)?)?;
     let base = PathBuf::from(&d.output_folder);
@@ -542,12 +578,21 @@ async fn open(
     Ok(Json(json!({})))
 }
 
-async fn pick_folder(State(e): State<Shared>, ConnectInfo(addr): ConnectInfo<SocketAddr>) -> R<Value> {
+async fn pick_folder(
+    State(e): State<Shared>,
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+) -> R<Value> {
     if !is_local(&e, &addr) {
-        return Err(ApiError(StatusCode::FORBIDDEN, "not available in remote mode".into()));
+        return Err(ApiError(
+            StatusCode::FORBIDDEN,
+            "not available in remote mode".into(),
+        ));
     }
     let Some(picker) = e.folder_picker.clone() else {
-        return Err(ApiError(StatusCode::NOT_IMPLEMENTED, "folder picker is not available".into()));
+        return Err(ApiError(
+            StatusCode::NOT_IMPLEMENTED,
+            "folder picker is not available".into(),
+        ));
     };
     let start = e.settings().download_folder;
     let picked = tokio::task::spawn_blocking(move || picker(start))
@@ -556,12 +601,29 @@ async fn pick_folder(State(e): State<Shared>, ConnectInfo(addr): ConnectInfo<Soc
     Ok(Json(json!({ "path": picked })))
 }
 
+async fn take_inbox(
+    State(e): State<Shared>,
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+) -> R<Value> {
+    if !is_local(&e, &addr) {
+        return Ok(Json(json!({ "items": [] })));
+    }
+    let items = std::mem::take(&mut *e.inbox.lock().unwrap());
+    Ok(Json(json!({ "items": items })))
+}
+
 async fn restart(State(e): State<Shared>, ConnectInfo(addr): ConnectInfo<SocketAddr>) -> R<Value> {
     if !is_local(&e, &addr) {
-        return Err(ApiError(StatusCode::FORBIDDEN, "not available in remote mode".into()));
+        return Err(ApiError(
+            StatusCode::FORBIDDEN,
+            "not available in remote mode".into(),
+        ));
     }
     let Some(hook) = e.restart.clone() else {
-        return Err(ApiError(StatusCode::NOT_IMPLEMENTED, "restart is not available".into()));
+        return Err(ApiError(
+            StatusCode::NOT_IMPLEMENTED,
+            "restart is not available".into(),
+        ));
     };
     tokio::spawn(async move {
         tokio::time::sleep(Duration::from_millis(200)).await;
@@ -587,7 +649,9 @@ struct ImportRequest {
 async fn import_run(State(e): State<Shared>, Json(req): Json<ImportRequest>) -> R<Value> {
     let dir = match req.path.filter(|p| !p.trim().is_empty()) {
         Some(p) => PathBuf::from(p.trim()),
-        None => import::default_dir(req.client).ok_or_else(|| bad("client data folder not found"))?,
+        None => {
+            import::default_dir(req.client).ok_or_else(|| bad("client data folder not found"))?
+        }
     };
     let items = tokio::task::spawn_blocking(move || import::scan(req.client, &dir))
         .await
@@ -603,7 +667,10 @@ async fn import_run(State(e): State<Shared>, Json(req): Json<ImportRequest>) -> 
         };
         match e
             .session()
-            .add_torrent(AddTorrent::TorrentFileBytes(item.torrent.into()), Some(opts))
+            .add_torrent(
+                AddTorrent::TorrentFileBytes(item.torrent.into()),
+                Some(opts),
+            )
             .await
         {
             Ok(AddTorrentResponse::AlreadyManaged(..)) => existing += 1,
@@ -611,7 +678,9 @@ async fn import_run(State(e): State<Shared>, Json(req): Json<ImportRequest>) -> 
             Err(err) => failed.push(json!({ "source": item.source, "error": format!("{err:#}") })),
         }
     }
-    Ok(Json(json!({ "found": found, "added": added, "existing": existing, "failed": failed })))
+    Ok(Json(
+        json!({ "found": found, "added": added, "existing": existing, "failed": failed }),
+    ))
 }
 
 async fn stream_file(

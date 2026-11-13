@@ -35,7 +35,12 @@ fn error(status: StatusCode, msg: &str) -> Response {
     (status, msg.to_string()).into_response()
 }
 
-pub async fn serve(engine: &Engine, id: TorrentIdOrHash, file: usize, headers: &HeaderMap) -> Response {
+pub async fn serve(
+    engine: &Engine,
+    id: TorrentIdOrHash,
+    file: usize,
+    headers: &HeaderMap,
+) -> Response {
     let mut stream = match engine.api.api_stream(id, file).await {
         Ok(s) => s,
         Err(e) => return error(e.status(), &e.to_string()),
@@ -67,9 +72,10 @@ pub async fn serve(engine: &Engine, id: TorrentIdOrHash, file: usize, headers: &
     };
 
     if start > 0
-        && let Err(e) = stream.seek(SeekFrom::Start(start)).await {
-            return error(StatusCode::INTERNAL_SERVER_ERROR, &e.to_string());
-        }
+        && let Err(e) = stream.seek(SeekFrom::Start(start)).await
+    {
+        return error(StatusCode::INTERNAL_SERVER_ERROR, &e.to_string());
+    }
     let take = if len == 0 { 0 } else { end - start + 1 };
     out.insert(header::CONTENT_LENGTH, HeaderValue::from(take));
     if status == StatusCode::PARTIAL_CONTENT {

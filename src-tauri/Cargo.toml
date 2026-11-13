@@ -1,0 +1,21 @@
+[package]
+name = "fishtorrnet"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Fast and honest BitTorrent client"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+fishtorrnet-engine.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tauri-plugin-single-instance = { version = "2", features = ["deep-link"] }
+tauri-plugin-deep-link = "2"
+url = "2"
+serde_json = "1"
