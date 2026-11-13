@@ -6,6 +6,7 @@ arch=('x86_64')
 url="https://github.com/myfreeze-art/FishTorrnet"
 license=('GPL-3.0-or-later')
 depends=('webkit2gtk-4.1' 'gtk3' 'openssl' 'hicolor-icon-theme')
+optdepends=('libayatana-appindicator: tray icon')
 provides=('fishtorrnet')
 conflicts=('fishtorrnet')
 options=('!debug' '!strip')

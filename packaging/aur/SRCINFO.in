@@ -9,6 +9,7 @@ pkgbase = fishtorrnet-bin
 	depends = gtk3
 	depends = openssl
 	depends = hicolor-icon-theme
+	optdepends = libayatana-appindicator: tray icon
 	provides = fishtorrnet
 	conflicts = fishtorrnet
 	options = !debug

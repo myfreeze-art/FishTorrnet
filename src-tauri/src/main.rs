@@ -112,7 +112,7 @@ fn main() -> anyhow::Result<()> {
             let tray_ok = match tray::create(app.handle()) {
                 Ok(()) => true,
                 Err(e) => {
-                    tracing::warn!("tray icon is not available: {e:#}");
+                    tracing::warn!("tray icon is not available: {e}");
                     false
                 }
             };

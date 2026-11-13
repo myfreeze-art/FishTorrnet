@@ -40,10 +40,16 @@
     "linux": {
       "deb": {
         "depends": [],
-        "desktopTemplate": "../packaging/linux/fishtorrnet.desktop"
+        "desktopTemplate": "../packaging/linux/fishtorrnet.desktop",
+        "recommends": [
+          "libayatana-appindicator3-1"
+        ]
       },
       "rpm": {
-        "desktopTemplate": "../packaging/linux/fishtorrnet.desktop"
+        "desktopTemplate": "../packaging/linux/fishtorrnet.desktop",
+        "recommends": [
+          "libayatana-appindicator-gtk3"
+        ]
       }
     },
     "macOS": {
@@ -54,7 +60,8 @@
       "webviewInstallMode": {
         "type": "downloadBootstrapper"
       }
-    }
+    },
+    "publisher": "FishTorrnet contributors"
   },
   "plugins": {
     "deep-link": {
