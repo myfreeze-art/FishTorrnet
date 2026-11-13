@@ -1,6 +1,6 @@
 id: io.github.myfreeze_art.FishTorrnet
 runtime: org.gnome.Platform
-runtime-version: "47"
+runtime-version: "51"
 sdk: org.gnome.Sdk
 command: fishtorrnet
 finish-args:
@@ -10,16 +10,83 @@ finish-args:
   - --socket=fallback-x11
   - --device=dri
   - --filesystem=xdg-download
+  - --talk-name=org.kde.StatusNotifierWatcher
+cleanup:
+  - /include
+  - /lib/cmake
+  - /lib/pkgconfig
+  - /share/cmake
+  - "*.a"
+  - "*.la"
 modules:
+  - name: intltool
+    cleanup:
+      - "*"
+    sources:
+      - type: archive
+        url: https://launchpad.net/intltool/trunk/0.51.0/+download/intltool-0.51.0.tar.gz
+        sha256: 67c74d94196b153b774ab9f89b2fa6c6ba79352407037c8c14d5aeb334e959cd
+
+  - name: libayatana-ido
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DENABLE_TESTS=NO
+      - -DCMAKE_INSTALL_LIBDIR=lib
+    sources:
+      - type: archive
+        url: https://github.com/AyatanaIndicators/ayatana-ido/archive/refs/tags/0.10.4.tar.gz
+        sha256: bd59abd5f1314e411d0d55ce3643e91cef633271f58126be529de5fb71c5ab38
+
+  - name: libdbusmenu-gtk3
+    buildsystem: autotools
+    build-options:
+      cflags: -Wno-error
+    config-opts:
+      - --with-gtk=3
+      - --disable-dumper
+      - --disable-static
+      - --disable-nls
+      - --disable-introspection
+      - --disable-vala
+      - --disable-gtk-doc
+    sources:
+      - type: archive
+        url: https://launchpad.net/libdbusmenu/16.04/16.04.0/+download/libdbusmenu-16.04.0.tar.gz
+        sha256: b9cc4a2acd74509435892823607d966d424bd9ad5d0b00938f27240a1bfa878a
+
+  - name: libayatana-indicator
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DENABLE_TESTS=NO
+      - -DENABLE_IDO=YES
+      - -DCMAKE_INSTALL_LIBDIR=lib
+    sources:
+      - type: archive
+        url: https://github.com/AyatanaIndicators/libayatana-indicator/archive/refs/tags/0.9.4.tar.gz
+        sha256: a18d3c682e29afd77db24366f8475b26bda22b0e16ff569a2ec71cd6eb4eac95
+
+  - name: libayatana-appindicator
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DENABLE_BINDINGS_MONO=NO
+      - -DENABLE_BINDINGS_VALA=NO
+      - -DENABLE_INTROSPECTION=NO
+      - -DCMAKE_INSTALL_LIBDIR=lib
+      - -DENABLE_GTKDOC=NO
+    sources:
+      - type: archive
+        url: https://github.com/AyatanaIndicators/libayatana-appindicator/archive/refs/tags/0.5.93.tar.gz
+        sha256: cbefed7a918a227bf71286246e237fcd3a9c8499b3eaac4897811a869409edf0
+
   - name: fishtorrnet
     buildsystem: simple
+    only-arches:
+      - x86_64
     sources:
       - type: file
         url: https://github.com/myfreeze-art/FishTorrnet/releases/download/v{{VERSION}}/FishTorrnet_{{VERSION}}_amd64.deb
         sha256: {{SHA_DEB}}
         dest-filename: fishtorrnet.deb
-        only-arches:
-          - x86_64
       - type: file
         path: io.github.myfreeze_art.FishTorrnet.metainfo.xml
     build-commands:
