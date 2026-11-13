@@ -19,4 +19,4 @@ Installers:
     InstallerUrl: https://github.com/myfreeze-art/FishTorrnet/releases/download/v{{VERSION}}/FishTorrnet_{{VERSION}}_x64_en-US.msi
     InstallerSha256: {{SHA_MSI}}
 ManifestType: installer
-ManifestVersion: 1.9.0
+ManifestVersion: 1.28.0

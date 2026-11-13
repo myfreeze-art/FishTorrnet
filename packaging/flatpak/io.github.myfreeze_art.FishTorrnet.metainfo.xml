@@ -63,6 +63,16 @@
     <color type="primary" scheme_preference="dark">#3a1d14</color>
   </branding>
   <releases>
+    <release version="0.2.1" date="2026-11-13">
+      <description>
+        <p>FishTorrnet no longer crashes at startup on systems without a tray library.</p>
+      </description>
+    </release>
+    <release version="0.2.0" date="2026-11-13">
+      <description>
+        <p>Ten interface languages, a tray icon that keeps downloads running after the window is closed, and a cleaner window without the system title bar.</p>
+      </description>
+    </release>
     <release version="0.1.0" date="2026-11-13">
       <description>
         <p>First release.</p>

@@ -125,7 +125,28 @@ fn engine(app: &AppHandle) -> Arc<Engine> {
     app.state::<Arc<Engine>>().inner().clone()
 }
 
-pub fn create(app: &AppHandle) -> tauri::Result<()> {
+#[cfg(target_os = "linux")]
+fn tray_supported() -> bool {
+    ["libayatana-appindicator3.so.1", "libappindicator3.so.1"]
+        .iter()
+        .any(|name| unsafe { libloading::Library::new(name) }.is_ok())
+}
+
+#[cfg(not(target_os = "linux"))]
+fn tray_supported() -> bool {
+    true
+}
+
+pub fn create(app: &AppHandle) -> Result<(), String> {
+    if !tray_supported() {
+        return Err("no app indicator library, install libayatana-appindicator".into());
+    }
+    std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| build(app)))
+        .map_err(|_| "tray icon panicked".to_string())?
+        .map_err(|e| e.to_string())
+}
+
+fn build(app: &AppHandle) -> tauri::Result<()> {
     let code = language(&engine(app));
     let mut builder = TrayIconBuilder::with_id("main")
         .tooltip("FishTorrnet")
