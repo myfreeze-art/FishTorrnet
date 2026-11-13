@@ -16,8 +16,17 @@ pub enum Theme {
 #[serde(rename_all = "lowercase")]
 pub enum Language {
     #[default]
-    Ru,
+    Auto,
     En,
+    Ru,
+    Uk,
+    De,
+    Fr,
+    Es,
+    Pt,
+    Zh,
+    Ja,
+    Tr,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -53,7 +62,7 @@ impl Default for Settings {
             remote_access: false,
             remote_port: 8787,
             theme: Theme::System,
-            language: Language::Ru,
+            language: Language::Auto,
         }
     }
 }
@@ -136,6 +145,18 @@ mod tests {
         assert_eq!(s.listen_port, 50000);
         assert!(s.dht);
         assert_eq!(s.peer_limit, 200);
+    }
+
+    #[test]
+    fn languages() {
+        for code in [
+            "auto", "en", "ru", "uk", "de", "fr", "es", "pt", "zh", "ja", "tr",
+        ] {
+            let s: Settings =
+                serde_json::from_str(&format!(r#"{{"language": "{code}"}}"#)).unwrap();
+            assert_eq!(serde_json::to_value(s.language).unwrap(), code);
+        }
+        assert_eq!(Settings::default().language, Language::Auto);
     }
 
     #[test]
