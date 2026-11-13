@@ -114,6 +114,7 @@ export const de: Locale = {
     themeLight: "Hell",
     language: "Sprache",
     languageAuto: "Wie im System",
+    closeToTray: "Beim Schließen des Fensters im Infobereich weiterlaufen",
     remoteEnable: "Steuerung vom Handy und anderen Geräten im Netzwerk erlauben",
     remotePort: "Port der Weboberfläche",
     save: "Speichern",

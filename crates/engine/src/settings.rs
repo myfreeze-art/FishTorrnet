@@ -45,6 +45,7 @@ pub struct Settings {
     pub remote_port: u16,
     pub theme: Theme,
     pub language: Language,
+    pub close_to_tray: bool,
 }
 
 impl Default for Settings {
@@ -63,6 +64,7 @@ impl Default for Settings {
             remote_port: 8787,
             theme: Theme::System,
             language: Language::Auto,
+            close_to_tray: true,
         }
     }
 }

@@ -114,6 +114,7 @@ export const zh: Locale = {
     themeLight: "浅色",
     language: "语言",
     languageAuto: "跟随系统",
+    closeToTray: "关闭窗口时最小化到托盘并继续下载",
     remoteEnable: "允许通过手机和网络中的其他设备控制",
     remotePort: "网页界面端口",
     save: "保存",

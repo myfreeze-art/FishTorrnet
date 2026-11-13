@@ -263,6 +263,32 @@ impl Engine {
         let _ = tokio::time::timeout(Duration::from_secs(5), self.session().stop()).await;
     }
 
+    fn torrent_ids(&self) -> Vec<usize> {
+        self.api
+            .api_torrent_list()
+            .torrents
+            .into_iter()
+            .filter_map(|t| t.id)
+            .collect()
+    }
+
+    pub async fn pause_all(&self) {
+        for id in self.torrent_ids() {
+            let _ = self.api.api_torrent_action_pause(id.into()).await;
+        }
+    }
+
+    pub async fn resume_all(&self) {
+        for id in self.torrent_ids() {
+            let _ = self.api.api_torrent_action_start(id.into()).await;
+        }
+    }
+
+    pub fn speeds(&self) -> (u64, u64) {
+        let s = self.api.api_session_stats();
+        (s.download_speed.as_bytes(), s.upload_speed.as_bytes())
+    }
+
     pub fn free_space(&self) -> Option<u64> {
         fs2::available_space(&self.settings.read().unwrap().download_folder).ok()
     }

@@ -114,6 +114,7 @@ export const fr: Locale = {
     themeLight: "Clair",
     language: "Langue",
     languageAuto: "Comme le système",
+    closeToTray: "Continuer dans la zone de notification à la fermeture de la fenêtre",
     remoteEnable: "Autoriser le contrôle depuis un téléphone et d'autres appareils du réseau",
     remotePort: "Port de l'interface web",
     save: "Enregistrer",

@@ -1,5 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod tray;
+
 use std::path::Path;
 use std::sync::Arc;
 
@@ -40,11 +42,7 @@ fn handle_args<'a>(app: &AppHandle, args: impl IntoIterator<Item = &'a str>) {
         return;
     };
     enqueue(&engine, args);
-    if let Some(window) = app.get_webview_window("main") {
-        let _ = window.unminimize();
-        let _ = window.show();
-        let _ = window.set_focus();
-    }
+    tray::show_window(app);
 }
 
 fn main() -> anyhow::Result<()> {
@@ -110,7 +108,28 @@ fn main() -> anyhow::Result<()> {
                 .traffic_light_position(tauri::LogicalPosition::new(18.0, 18.0));
             #[cfg(not(target_os = "macos"))]
             let window = window.decorations(false).shadow(true);
-            window.build()?;
+            let window = window.build()?;
+            let tray_ok = match tray::create(app.handle()) {
+                Ok(()) => true,
+                Err(e) => {
+                    tracing::warn!("tray icon is not available: {e:#}");
+                    false
+                }
+            };
+            let closing = window.clone();
+            window.on_window_event(move |event| {
+                if let tauri::WindowEvent::CloseRequested { api, .. } = event {
+                    let to_tray = tray_ok
+                        && closing
+                            .app_handle()
+                            .try_state::<Arc<Engine>>()
+                            .is_some_and(|e| e.settings().close_to_tray);
+                    if to_tray {
+                        api.prevent_close();
+                        let _ = closing.hide();
+                    }
+                }
+            });
             Ok(())
         })
         .build(tauri::generate_context!())?;
@@ -121,6 +140,8 @@ fn main() -> anyhow::Result<()> {
             let urls: Vec<String> = urls.iter().map(|u| u.to_string()).collect();
             handle_args(app, urls.iter().map(String::as_str));
         }
+        #[cfg(target_os = "macos")]
+        RunEvent::Reopen { .. } => tray::show_window(app),
         RunEvent::Exit => {
             if let Some(engine) = app.try_state::<Arc<Engine>>() {
                 tauri::async_runtime::block_on(engine.shutdown());
