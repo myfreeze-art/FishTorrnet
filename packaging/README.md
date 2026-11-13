@@ -39,18 +39,7 @@ git push origin v0.2.0
 
 ## Microsoft Store
 
-Магазин сам подписывает пакеты `.msix`, поэтому SmartScreen не показывает предупреждений.
-
-1. Зарегистрируйтесь в [Partner Center](https://partner.microsoft.com/dashboard/registration) как частный разработчик.
-2. Создайте приложение и зарезервируйте имя FishTorrnet.
-3. В разделе «Product identity» найдите три значения и добавьте их в репозиторий на GitHub: Settings → Secrets and variables → Actions → вкладка Variables:
-   - `MSIX_IDENTITY_NAME` — значение `Package/Identity/Name`;
-   - `MSIX_PUBLISHER` — значение `Package/Identity/Publisher`, начинается с `CN=`;
-   - `MSIX_PUBLISHER_DISPLAY_NAME` — значение `Package/Properties/PublisherDisplayName`.
-4. Выпустите версию. Загрузите файл `FishTorrnet_X.Y.Z_x64.msix` из выпуска в Partner Center в разделе «Packages».
-5. В анкете укажите, что приложению нужна возможность `runFullTrust`: это обычное настольное приложение. В описании для проверки напишите, что это BitTorrent-клиент без встроенного поиска контента.
-
-Для работы нужен WebView2. В Windows 11 он есть всегда, в Windows 10 обычно ставится вместе с Edge.
+Пошаговая инструкция, тексты страницы на 10 языках и логотипы лежат в [msstore/README.md](msstore/README.md).
 
 ## winget
 

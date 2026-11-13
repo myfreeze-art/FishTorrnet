@@ -115,7 +115,7 @@ Installers end up in `target/release/bundle`. To run without a window on a serve
 - [Development, project layout and HTTP API](docs/DEVELOPMENT.md)
 - [Releases and publishing to stores](packaging/README.md)
 - [Translating the app](docs/TRANSLATING.md)
-- [Contributing](CONTRIBUTING.md) and [security policy](SECURITY.md)
+- [Contributing](CONTRIBUTING.md), [security policy](SECURITY.md) and [privacy policy](docs/PRIVACY.md)
 
 ## License
 

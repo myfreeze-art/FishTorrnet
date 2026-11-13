@@ -19,4 +19,4 @@ Tags:
   - downloader
 ReleaseNotesUrl: https://github.com/myfreeze-art/FishTorrnet/releases/tag/v{{VERSION}}
 ManifestType: defaultLocale
-ManifestVersion: 1.28.0
+ManifestVersion: 1.12.0
