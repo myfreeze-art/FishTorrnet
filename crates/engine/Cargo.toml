@@ -1,0 +1,30 @@
+[package]
+name = "fishtorrnet-engine"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+librqbit = "9.1"
+axum = "0.8"
+http = "1"
+bytes = "1"
+tokio-util = { version = "0.7", features = ["io"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+base64 = "0.22"
+rand = "0.9"
+dirs = "6"
+opener = { version = "0.9", features = ["reveal"] }
+rust-embed = { version = "8", features = ["mime-guess"] }
+mime_guess = "2"
+qrcode = { version = "0.14", default-features = false, features = ["svg"] }
+local-ip-address = "0.6"
+fs2 = "0.4"
+
+[dev-dependencies]
+tempfile = "3"
+tower = { version = "0.5", features = ["util"] }
