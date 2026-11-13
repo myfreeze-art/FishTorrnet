@@ -63,6 +63,11 @@
     <color type="primary" scheme_preference="dark">#3a1d14</color>
   </branding>
   <releases>
+    <release version="0.2.3" date="2026-11-13">
+      <description>
+        <p>New installers for Windows and macOS and a download page that picks the right file.</p>
+      </description>
+    </release>
     <release version="0.2.2" date="2026-11-13">
       <description>
         <p>Microsoft Store package and more reliable release builds.</p>
