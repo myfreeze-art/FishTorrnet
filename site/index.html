@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FishTorrnet — fast and honest BitTorrent client</title>
+<meta name="description" content="Free, open source BitTorrent client without ads or telemetry. Watch videos while they download, FishGuard malware checks, phone control.">
+<meta name="color-scheme" content="dark light">
+<meta property="og:title" content="FishTorrnet">
+<meta property="og:description" content="A fast and honest BitTorrent client. No ads. No telemetry. Open source.">
+<meta property="og:image" content="screenshots/main-dark.png">
+<link rel="icon" href="logo-dark.svg" type="image/svg+xml">
+<style>
+:root {
+  --bg: #0f0f11;
+  --card: #17171a;
+  --line: #26262b;
+  --text: #ededef;
+  --muted: #a1a1a9;
+  --faint: #6c6c75;
+  --accent: #ff6a3d;
+  --accent-hover: #ff7d55;
+  --blue: #2f7bff;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #ffffff;
+    --card: #f7f7f8;
+    --line: #e6e6ea;
+    --text: #17171a;
+    --muted: #5d5d66;
+    --faint: #93939c;
+    color-scheme: light;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+a { color: inherit; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+header.top { display: flex; align-items: center; gap: 12px; height: 64px; }
+header.top img { width: 28px; height: 28px; }
+header.top b { font-size: 15px; }
+header.top nav { margin-left: auto; display: flex; gap: 20px; font-size: 14px; }
+header.top nav a { color: var(--muted); text-decoration: none; }
+header.top nav a:hover { color: var(--text); }
+.hero { text-align: center; padding: 56px 0 32px; position: relative; }
+.hero::before {
+  content: "";
+  position: absolute; inset: -40px 0 auto;
+  height: 420px;
+  background: radial-gradient(60% 60% at 50% 0%, rgba(255, 106, 61, 0.16), transparent 70%);
+  pointer-events: none;
+}
+.hero .logo { width: 96px; height: 96px; position: relative; filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.18)); }
+.hero h1 { font-size: 48px; line-height: 1.1; margin: 24px 0 12px; letter-spacing: -0.02em; position: relative; }
+.hero p.tag { font-size: 19px; color: var(--muted); margin: 0 0 32px; position: relative; }
+.cta { display: inline-flex; flex-direction: column; align-items: center; gap: 12px; position: relative; }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  height: 52px; padding: 0 28px;
+  border-radius: 12px; border: 0;
+  background: var(--accent); color: #fff;
+  font: inherit; font-size: 17px; font-weight: 600;
+  text-decoration: none; cursor: pointer;
+  box-shadow: 0 8px 24px rgba(255, 106, 61, 0.28);
+}
+.btn:hover { background: var(--accent-hover); }
+.btn svg { width: 20px; height: 20px; }
+.meta { font-size: 13px; color: var(--faint); }
+.meta a { color: var(--muted); }
+.shot { margin: 40px auto 0; max-width: 960px; position: relative; }
+.shot img { width: 100%; border-radius: 14px; border: 1px solid var(--line); box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35); display: block; }
+section { padding: 56px 0 0; }
+section h2 { font-size: 26px; margin: 0 0 20px; letter-spacing: -0.01em; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+.card h3 { margin: 0 0 6px; font-size: 16px; }
+.card p { margin: 0; color: var(--muted); font-size: 14px; }
+.dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.dl .card { display: flex; flex-direction: column; gap: 10px; }
+.dl .card.here { border-color: var(--accent); }
+.dl a.file {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line);
+  text-decoration: none; font-size: 14px; background: var(--bg);
+}
+.dl a.file:hover { border-color: var(--faint); }
+.dl a.file span:last-child { color: var(--faint); font-size: 12px; white-space: nowrap; }
+code, .cmd { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; }
+.cmd { display: block; padding: 10px 12px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); overflow-x: auto; white-space: nowrap; }
+.note { color: var(--muted); font-size: 14px; }
+footer { padding: 56px 0 40px; color: var(--faint); font-size: 13px; text-align: center; }
+footer a { color: var(--muted); }
+select { font: inherit; font-size: 13px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; }
+@media (max-width: 820px) {
+  .grid, .dl { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 36px; }
+  header.top nav a.hide-sm { display: none; }
+}
+</style>
+</head>
+<body>
+<header class="top wrap">
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="logo-light.svg">
+    <img src="logo-dark.svg" alt="">
+  </picture>
+  <b>FishTorrnet</b>
+  <nav>
+    <a href="#features" data-t="navFeatures" class="hide-sm">Features</a>
+    <a href="#download" data-t="navDownload">Download</a>
+    <a href="https://github.com/myfreeze-art/FishTorrnet">GitHub</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <picture>
+      <source media="(prefers-color-scheme: light)" srcset="logo-light.svg">
+      <img class="logo" src="logo-dark.svg" alt="FishTorrnet">
+    </picture>
+    <h1 data-t="title">A fast and honest BitTorrent client</h1>
+    <p class="tag" data-t="tagline">No ads. No telemetry. Open source.</p>
+    <div class="cta">
+      <a class="btn" id="main" href="https://github.com/myfreeze-art/FishTorrnet/releases/latest">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v10M5.5 8.5 10 13l4.5-4.5M4 17h12"/></svg>
+        <span id="mainLabel" data-t="download">Download</span>
+      </a>
+      <span class="meta" id="mainMeta"></span>
+    </div>
+    <div class="shot">
+      <picture>
+        <source media="(prefers-color-scheme: light)" srcset="screenshots/main-light.png">
+        <img src="screenshots/main-dark.png" alt="FishTorrnet">
+      </picture>
+    </div>
+  </div>
+
+  <section id="features">
+    <h2 data-t="featuresTitle">Why people switch</h2>
+    <div class="grid">
+      <div class="card"><h3 data-t="f1t">Watch while it downloads</h3><p data-t="f1">Videos and music start playing right away in the built-in player.</p></div>
+      <div class="card"><h3 data-t="f2t">FishGuard</h3><p data-t="f2">Catches fake movies like video.mp4.exe and other malware tricks before you download.</p></div>
+      <div class="card"><h3 data-t="f3t">Control from your phone</h3><p data-t="f3">Scan a QR code and manage downloads from any phone on your Wi-Fi.</p></div>
+      <div class="card"><h3 data-t="f4t">Move in with one click</h3><p data-t="f4">Import your torrents from qBittorrent and uTorrent and keep seeding.</p></div>
+      <div class="card"><h3 data-t="f5t">Runs in the background</h3><p data-t="f5">Close the window and FishTorrnet keeps downloading in the tray.</p></div>
+      <div class="card"><h3 data-t="f6t">Honest forever</h3><p data-t="f6">No ads, no telemetry, no accounts. The code is open for everyone.</p></div>
+    </div>
+  </section>
+
+  <section id="download">
+    <h2 data-t="allTitle">Download for your system</h2>
+    <div class="dl">
+      <div class="card" id="card-windows">
+        <h3>Windows 10 / 11</h3>
+        <div class="files" data-os="windows"></div>
+        <code class="cmd">winget install myfreeze-art.FishTorrnet</code>
+      </div>
+      <div class="card" id="card-mac">
+        <h3>macOS 11+</h3>
+        <div class="files" data-os="mac"></div>
+        <p class="note" data-t="macNote">One build for Intel and Apple Silicon.</p>
+      </div>
+      <div class="card" id="card-linux">
+        <h3>Linux</h3>
+        <div class="files" data-os="linux"></div>
+        <code class="cmd">yay -S fishtorrnet-bin</code>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3 data-t="serverTitle">Server or NAS</h3>
+      <p class="note" data-t="serverText">Run FishTorrnet without a screen and control it from a browser.</p>
+      <code class="cmd" style="margin-top:10px">docker run -d -p 8787:8787 -v ./downloads:/downloads ghcr.io/myfreeze-art/fishtorrnet</code>
+    </div>
+    <p class="note" style="margin-top:20px" data-t="firstRun">FishTorrnet is free, so the installers are not signed with a paid certificate. On Windows click “More info” and then “Run anyway”. On macOS open System Settings → Privacy &amp; Security and click “Open Anyway”.</p>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p>
+    <a href="https://github.com/myfreeze-art/FishTorrnet">GitHub</a> ·
+    <a href="https://github.com/myfreeze-art/FishTorrnet/releases" data-t="allReleases">All releases</a> ·
+    <a href="https://github.com/myfreeze-art/FishTorrnet/blob/main/docs/PRIVACY.md" data-t="privacy">Privacy</a> ·
+    <select id="lang" aria-label="Language"></select>
+  </p>
+  <p>GPL-3.0-or-later</p>
+</footer>
+
+<script>
+const REPO = "myfreeze-art/FishTorrnet";
+const LANGS = {
+  en: { name: "English", navFeatures: "Features", navDownload: "Download", title: "A fast and honest BitTorrent client", tagline: "No ads. No telemetry. Open source.", download: "Download", downloadFor: "Download for {os}", version: "Version {v}", other: "Other systems", featuresTitle: "Why people switch", f1t: "Watch while it downloads", f1: "Videos and music start playing right away in the built-in player.", f2t: "FishGuard", f2: "Catches fake movies like video.mp4.exe and other malware tricks before you download.", f3t: "Control from your phone", f3: "Scan a QR code and manage downloads from any phone on your Wi-Fi.", f4t: "Move in with one click", f4: "Import your torrents from qBittorrent and uTorrent and keep seeding.", f5t: "Runs in the background", f5: "Close the window and FishTorrnet keeps downloading in the tray.", f6t: "Honest forever", f6: "No ads, no telemetry, no accounts. The code is open for everyone.", allTitle: "Download for your system", macNote: "One build for Intel and Apple Silicon.", serverTitle: "Server or NAS", serverText: "Run FishTorrnet without a screen and control it from a browser.", firstRun: "FishTorrnet is free, so the installers are not signed with a paid certificate. On Windows click “More info” and then “Run anyway”. On macOS open System Settings → Privacy & Security and click “Open Anyway”.", allReleases: "All releases", privacy: "Privacy", phone: "FishTorrnet runs on computers. Install it on your PC and control it from this phone with a QR code.", installer: "Installer", recommended: "recommended" },
+  ru: { name: "Русский", navFeatures: "Возможности", navDownload: "Скачать", title: "Быстрый и честный BitTorrent-клиент", tagline: "Без рекламы. Без телеметрии. С открытым кодом.", download: "Скачать", downloadFor: "Скачать для {os}", version: "Версия {v}", other: "Другие системы", featuresTitle: "Почему переходят", f1t: "Смотрите во время загрузки", f1: "Видео и музыка сразу играют во встроенном плеере.", f2t: "FishGuard", f2: "Ловит фальшивые фильмы вроде video.mp4.exe и другие уловки вирусов ещё до загрузки.", f3t: "Управление с телефона", f3: "Отсканируйте QR-код и управляйте загрузками с любого телефона в вашей Wi-Fi.", f4t: "Переезд в один клик", f4: "Перенесите раздачи из qBittorrent и uTorrent и продолжайте раздавать.", f5t: "Работает в фоне", f5: "Закройте окно — FishTorrnet продолжит качать в трее.", f6t: "Честно навсегда", f6: "Без рекламы, телеметрии и учётных записей. Код открыт для всех.", allTitle: "Скачать для вашей системы", macNote: "Одна сборка для Intel и Apple Silicon.", serverTitle: "Сервер или NAS", serverText: "Запустите FishTorrnet без экрана и управляйте им из браузера.", firstRun: "FishTorrnet бесплатный, поэтому установщики не подписаны платным сертификатом. В Windows нажмите «Подробнее», затем «Выполнить в любом случае». В macOS откройте «Системные настройки → Конфиденциальность и безопасность» и нажмите «Всё равно открыть».", allReleases: "Все версии", privacy: "Конфиденциальность", phone: "FishTorrnet работает на компьютерах. Установите его на ПК и управляйте с этого телефона по QR-коду.", installer: "Установщик", recommended: "рекомендуем" },
+  uk: { name: "Українська", navFeatures: "Можливості", navDownload: "Завантажити", title: "Швидкий і чесний BitTorrent-клієнт", tagline: "Без реклами. Без телеметрії. З відкритим кодом.", download: "Завантажити", downloadFor: "Завантажити для {os}", version: "Версія {v}", other: "Інші системи", featuresTitle: "Чому переходять", f1t: "Дивіться під час завантаження", f1: "Відео й музика одразу грають у вбудованому плеєрі.", f2t: "FishGuard", f2: "Виявляє фальшиві фільми на кшталт video.mp4.exe та інші пастки вірусів ще до завантаження.", f3t: "Керування з телефона", f3: "Відскануйте QR-код і керуйте завантаженнями з будь-якого телефона у вашій Wi-Fi.", f4t: "Переїзд в один клік", f4: "Перенесіть роздачі з qBittorrent і uTorrent і продовжуйте роздавати.", f5t: "Працює у фоні", f5: "Закрийте вікно — FishTorrnet продовжить завантажувати в треї.", f6t: "Чесно назавжди", f6: "Без реклами, телеметрії й облікових записів. Код відкритий для всіх.", allTitle: "Завантажити для вашої системи", macNote: "Одна збірка для Intel і Apple Silicon.", serverTitle: "Сервер або NAS", serverText: "Запустіть FishTorrnet без екрана й керуйте ним із браузера.", firstRun: "FishTorrnet безкоштовний, тому інсталятори не підписані платним сертифікатом. У Windows натисніть «Докладніше», потім «Усе одно запустити». У macOS відкрийте «Системні параметри → Приватність і безпека» та натисніть «Усе одно відкрити».", allReleases: "Усі версії", privacy: "Конфіденційність", phone: "FishTorrnet працює на комп'ютерах. Встановіть його на ПК і керуйте з цього телефона за QR-кодом.", installer: "Інсталятор", recommended: "радимо" },
+  de: { name: "Deutsch", navFeatures: "Funktionen", navDownload: "Download", title: "Ein schneller und ehrlicher BitTorrent-Client", tagline: "Keine Werbung. Keine Telemetrie. Open Source.", download: "Herunterladen", downloadFor: "Für {os} herunterladen", version: "Version {v}", other: "Andere Systeme", featuresTitle: "Warum Leute wechseln", f1t: "Ansehen, während es lädt", f1: "Videos und Musik starten sofort im eingebauten Player.", f2t: "FishGuard", f2: "Erkennt gefälschte Filme wie video.mp4.exe und andere Malware-Tricks vor dem Download.", f3t: "Steuerung vom Handy", f3: "QR-Code scannen und Downloads von jedem Handy im WLAN verwalten.", f4t: "Umzug mit einem Klick", f4: "Torrents aus qBittorrent und uTorrent übernehmen und weiter teilen.", f5t: "Läuft im Hintergrund", f5: "Fenster schließen, FishTorrnet lädt im Infobereich weiter.", f6t: "Für immer ehrlich", f6: "Keine Werbung, keine Telemetrie, keine Konten. Der Code ist für alle offen.", allTitle: "Für dein System herunterladen", macNote: "Ein Build für Intel und Apple Silicon.", serverTitle: "Server oder NAS", serverText: "FishTorrnet ohne Bildschirm betreiben und im Browser steuern.", firstRun: "FishTorrnet ist kostenlos, daher sind die Installer nicht mit einem kostenpflichtigen Zertifikat signiert. Unter Windows auf „Weitere Informationen“ und dann „Trotzdem ausführen“ klicken. Unter macOS „Systemeinstellungen → Datenschutz & Sicherheit“ öffnen und „Dennoch öffnen“ wählen.", allReleases: "Alle Versionen", privacy: "Datenschutz", phone: "FishTorrnet läuft auf Computern. Installiere es auf dem PC und steuere es per QR-Code von diesem Handy.", installer: "Installer", recommended: "empfohlen" },
+  fr: { name: "Français", navFeatures: "Fonctionnalités", navDownload: "Télécharger", title: "Un client BitTorrent rapide et honnête", tagline: "Sans publicité. Sans télémétrie. Open source.", download: "Télécharger", downloadFor: "Télécharger pour {os}", version: "Version {v}", other: "Autres systèmes", featuresTitle: "Pourquoi l'adopter", f1t: "Regardez pendant le téléchargement", f1: "Vidéos et musique démarrent tout de suite dans le lecteur intégré.", f2t: "FishGuard", f2: "Repère les faux films comme video.mp4.exe et autres pièges avant le téléchargement.", f3t: "Contrôle depuis le téléphone", f3: "Scannez un QR code et gérez vos téléchargements depuis votre Wi-Fi.", f4t: "Déménagement en un clic", f4: "Importez vos torrents depuis qBittorrent et uTorrent et continuez à partager.", f5t: "Tourne en arrière-plan", f5: "Fermez la fenêtre, FishTorrnet continue dans la zone de notification.", f6t: "Honnête pour toujours", f6: "Sans publicité, sans télémétrie, sans compte. Le code est ouvert à tous.", allTitle: "Télécharger pour votre système", macNote: "Une seule version pour Intel et Apple Silicon.", serverTitle: "Serveur ou NAS", serverText: "Faites tourner FishTorrnet sans écran et pilotez-le depuis un navigateur.", firstRun: "FishTorrnet est gratuit : les installeurs ne sont pas signés avec un certificat payant. Sous Windows, cliquez sur « Informations complémentaires » puis « Exécuter quand même ». Sous macOS, ouvrez Réglages Système → Confidentialité et sécurité et cliquez sur « Ouvrir quand même ».", allReleases: "Toutes les versions", privacy: "Confidentialité", phone: "FishTorrnet fonctionne sur ordinateur. Installez-le sur votre PC et pilotez-le depuis ce téléphone par QR code.", installer: "Installeur", recommended: "recommandé" },
+  es: { name: "Español", navFeatures: "Funciones", navDownload: "Descargar", title: "Un cliente BitTorrent rápido y honesto", tagline: "Sin anuncios. Sin telemetría. Código abierto.", download: "Descargar", downloadFor: "Descargar para {os}", version: "Versión {v}", other: "Otros sistemas", featuresTitle: "Por qué la gente se cambia", f1t: "Mira mientras se descarga", f1: "Los vídeos y la música empiezan al instante en el reproductor integrado.", f2t: "FishGuard", f2: "Detecta películas falsas como video.mp4.exe y otros trucos de malware antes de descargar.", f3t: "Control desde el móvil", f3: "Escanea un código QR y gestiona las descargas desde tu Wi-Fi.", f4t: "Mudanza en un clic", f4: "Importa tus torrents de qBittorrent y uTorrent y sigue compartiendo.", f5t: "Funciona en segundo plano", f5: "Cierra la ventana y FishTorrnet sigue descargando en la bandeja.", f6t: "Honesto para siempre", f6: "Sin anuncios, sin telemetría, sin cuentas. El código está abierto para todos.", allTitle: "Descarga para tu sistema", macNote: "Una sola versión para Intel y Apple Silicon.", serverTitle: "Servidor o NAS", serverText: "Ejecuta FishTorrnet sin pantalla y contrólalo desde el navegador.", firstRun: "FishTorrnet es gratuito, así que los instaladores no están firmados con un certificado de pago. En Windows pulsa «Más información» y luego «Ejecutar de todas formas». En macOS abre Ajustes del Sistema → Privacidad y seguridad y pulsa «Abrir igualmente».", allReleases: "Todas las versiones", privacy: "Privacidad", phone: "FishTorrnet funciona en ordenadores. Instálalo en tu PC y contrólalo desde este móvil con un código QR.", installer: "Instalador", recommended: "recomendado" },
+  pt: { name: "Português", navFeatures: "Recursos", navDownload: "Baixar", title: "Um cliente BitTorrent rápido e honesto", tagline: "Sem anúncios. Sem telemetria. Código aberto.", download: "Baixar", downloadFor: "Baixar para {os}", version: "Versão {v}", other: "Outros sistemas", featuresTitle: "Por que as pessoas mudam", f1t: "Assista enquanto baixa", f1: "Vídeos e músicas começam na hora no player integrado.", f2t: "FishGuard", f2: "Detecta filmes falsos como video.mp4.exe e outros truques de malware antes do download.", f3t: "Controle pelo celular", f3: "Leia um QR code e gerencie os downloads pelo seu Wi-Fi.", f4t: "Mudança em um clique", f4: "Importe seus torrents do qBittorrent e do uTorrent e continue semeando.", f5t: "Roda em segundo plano", f5: "Feche a janela e o FishTorrnet continua baixando na bandeja.", f6t: "Honesto para sempre", f6: "Sem anúncios, sem telemetria, sem contas. O código é aberto para todos.", allTitle: "Baixe para o seu sistema", macNote: "Uma versão para Intel e Apple Silicon.", serverTitle: "Servidor ou NAS", serverText: "Rode o FishTorrnet sem tela e controle pelo navegador.", firstRun: "O FishTorrnet é gratuito, então os instaladores não são assinados com um certificado pago. No Windows, clique em “Mais informações” e depois em “Executar assim mesmo”. No macOS, abra Ajustes do Sistema → Privacidade e Segurança e clique em “Abrir Mesmo Assim”.", allReleases: "Todas as versões", privacy: "Privacidade", phone: "O FishTorrnet roda em computadores. Instale no seu PC e controle por este celular com um QR code.", installer: "Instalador", recommended: "recomendado" },
+  zh: { name: "简体中文", navFeatures: "功能", navDownload: "下载", title: "快速、诚实的 BitTorrent 客户端", tagline: "无广告，无遥测，开源。", download: "下载", downloadFor: "下载 {os} 版", version: "版本 {v}", other: "其他系统", featuresTitle: "为什么选择它", f1t: "边下边播", f1: "视频和音乐可以立即在内置播放器中播放。", f2t: "FishGuard", f2: "在下载前识别 video.mp4.exe 之类的假电影和其他恶意软件伎俩。", f3t: "用手机控制", f3: "扫描二维码，即可在同一 Wi-Fi 下用手机管理下载。", f4t: "一键迁移", f4: "从 qBittorrent 和 uTorrent 导入种子并继续做种。", f5t: "后台运行", f5: "关闭窗口后，FishTorrnet 会在托盘中继续下载。", f6t: "永远诚实", f6: "无广告、无遥测、无需账号。代码对所有人开放。", allTitle: "下载适合你系统的版本", macNote: "同一个版本支持 Intel 和 Apple Silicon。", serverTitle: "服务器或 NAS", serverText: "无界面运行 FishTorrnet，并通过浏览器控制。", firstRun: "FishTorrnet 是免费的，安装程序没有使用付费证书签名。在 Windows 上点击“更多信息”，然后点击“仍要运行”。在 macOS 上打开“系统设置 → 隐私与安全性”，点击“仍要打开”。", allReleases: "所有版本", privacy: "隐私", phone: "FishTorrnet 运行在电脑上。在电脑上安装后，可以用这部手机扫码控制。", installer: "安装程序", recommended: "推荐" },
+  ja: { name: "日本語", navFeatures: "機能", navDownload: "ダウンロード", title: "速くて誠実な BitTorrent クライアント", tagline: "広告なし。テレメトリなし。オープンソース。", download: "ダウンロード", downloadFor: "{os} 版をダウンロード", version: "バージョン {v}", other: "その他のシステム", featuresTitle: "選ばれる理由", f1t: "ダウンロードしながら再生", f1: "動画や音楽が内蔵プレーヤーですぐに再生できます。", f2t: "FishGuard", f2: "video.mp4.exe のような偽の映画やマルウェアの手口をダウンロード前に検出します。", f3t: "スマホから操作", f3: "QR コードを読み取れば、同じ Wi-Fi のスマホからダウンロードを管理できます。", f4t: "ワンクリックで乗り換え", f4: "qBittorrent と uTorrent からトレントをインポートしてシードを続けられます。", f5t: "バックグラウンドで動作", f5: "ウィンドウを閉じても FishTorrnet はトレイでダウンロードを続けます。", f6t: "ずっと誠実", f6: "広告なし、テレメトリなし、アカウント不要。コードは誰でも見られます。", allTitle: "お使いのシステム向けにダウンロード", macNote: "Intel と Apple シリコンの両方に対応した 1 つのビルドです。", serverTitle: "サーバーや NAS", serverText: "画面なしで FishTorrnet を動かし、ブラウザから操作できます。", firstRun: "FishTorrnet は無料のため、インストーラーは有料の証明書で署名されていません。Windows では「詳細情報」をクリックしてから「実行」を選びます。macOS では「システム設定 → プライバシーとセキュリティ」を開き、「このまま開く」をクリックします。", allReleases: "すべてのリリース", privacy: "プライバシー", phone: "FishTorrnet はパソコンで動作します。PC にインストールし、このスマホから QR コードで操作できます。", installer: "インストーラー", recommended: "おすすめ" },
+  tr: { name: "Türkçe", navFeatures: "Özellikler", navDownload: "İndir", title: "Hızlı ve dürüst bir BitTorrent istemcisi", tagline: "Reklam yok. Telemetri yok. Açık kaynak.", download: "İndir", downloadFor: "{os} için indir", version: "Sürüm {v}", other: "Diğer sistemler", featuresTitle: "Neden geçiyorlar", f1t: "İnerken izle", f1: "Video ve müzik yerleşik oynatıcıda hemen başlar.", f2t: "FishGuard", f2: "video.mp4.exe gibi sahte filmleri ve diğer zararlı yazılım hilelerini indirmeden önce yakalar.", f3t: "Telefondan kontrol", f3: "QR kodunu okutun ve indirmeleri Wi-Fi'nizdeki telefondan yönetin.", f4t: "Tek tıkla taşınma", f4: "Torrentlerinizi qBittorrent ve uTorrent'ten aktarın, paylaşmaya devam edin.", f5t: "Arka planda çalışır", f5: "Pencereyi kapatın, FishTorrnet tepside indirmeye devam etsin.", f6t: "Sonsuza kadar dürüst", f6: "Reklam yok, telemetri yok, hesap yok. Kod herkese açık.", allTitle: "Sisteminiz için indirin", macNote: "Intel ve Apple Silicon için tek sürüm.", serverTitle: "Sunucu veya NAS", serverText: "FishTorrnet'i ekransız çalıştırın ve tarayıcıdan yönetin.", firstRun: "FishTorrnet ücretsizdir; bu yüzden yükleyiciler ücretli bir sertifikayla imzalanmamıştır. Windows'ta “Ek bilgi”, ardından “Yine de çalıştır”a tıklayın. macOS'ta Sistem Ayarları → Gizlilik ve Güvenlik'i açıp “Yine de Aç”a tıklayın.", allReleases: "Tüm sürümler", privacy: "Gizlilik", phone: "FishTorrnet bilgisayarlarda çalışır. PC'nize kurun ve bu telefondan QR kodla yönetin.", installer: "Yükleyici", recommended: "önerilen" }
+};
+
+function pickLang() {
+  const saved = localStorage.getItem("ft.lang");
+  if (saved && LANGS[saved]) return saved;
+  for (const tag of navigator.languages || [navigator.language]) {
+    const base = tag.toLowerCase().split("-")[0];
+    if (LANGS[base]) return base;
+  }
+  return "en";
+}
+
+let lang = pickLang();
+const t = (k, vars = {}) => (LANGS[lang][k] ?? LANGS.en[k]).replace(/\{(\w+)\}/g, (_, n) => vars[n] ?? "");
+
+function detectOS() {
+  const ua = navigator.userAgent;
+  if (/Android|iPhone|iPad|iPod/i.test(ua)) return "phone";
+  if (/Windows/i.test(ua)) return "windows";
+  if (/Mac/i.test(ua)) return "mac";
+  if (/Linux|X11|CrOS/i.test(ua)) return "linux";
+  return "other";
+}
+
+const OS_NAME = { windows: "Windows", mac: "macOS", linux: "Linux" };
+const RULES = {
+  windows: [[/_x64-setup\.exe$/, "setup.exe", true], [/_x64_en-US\.msi$/, ".msi"]],
+  mac: [[/_universal\.dmg$/, ".dmg", true]],
+  linux: [[/_amd64\.AppImage$/, "AppImage", true], [/_amd64\.deb$/, ".deb · Ubuntu, Debian"], [/\.x86_64\.rpm$/, ".rpm · Fedora, openSUSE"]],
+};
+
+let release = null;
+const os = detectOS();
+
+function size(bytes) {
+  return (bytes / 1048576).toLocaleString(lang, { maximumFractionDigits: 1 }) + " MB";
+}
+
+function render() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-t]").forEach((el) => (el.textContent = t(el.dataset.t)));
+  const main = document.getElementById("main");
+  const label = document.getElementById("mainLabel");
+  const meta = document.getElementById("mainMeta");
+  document.querySelectorAll(".dl .card").forEach((c) => c.classList.toggle("here", c.id === "card-" + os));
+
+  if (os === "phone") {
+    label.textContent = t("download");
+    main.href = "#download";
+    meta.textContent = t("phone");
+  } else if (release && RULES[os]) {
+    const asset = release.assets.find((a) => RULES[os].find((r) => r[2] && r[0].test(a.name)));
+    label.textContent = t("downloadFor", { os: OS_NAME[os] });
+    main.href = asset ? asset.browser_download_url : release.html_url;
+    meta.innerHTML = "";
+    meta.append(t("version", { v: release.tag_name.replace(/^v/, "") }) + (asset ? " · " + size(asset.size) : "") + " · ");
+    const a = document.createElement("a");
+    a.href = "#download";
+    a.textContent = t("other");
+    meta.append(a);
+  } else {
+    label.textContent = t("download");
+  }
+
+  document.querySelectorAll(".files").forEach((box) => {
+    box.innerHTML = "";
+    if (!release) return;
+    for (const [re, title, rec] of RULES[box.dataset.os]) {
+      const asset = release.assets.find((a) => re.test(a.name));
+      if (!asset) continue;
+      const link = document.createElement("a");
+      link.className = "file";
+      link.href = asset.browser_download_url;
+      const name = document.createElement("span");
+      name.textContent = rec ? `${title} · ${t("recommended")}` : title;
+      const s = document.createElement("span");
+      s.textContent = size(asset.size);
+      link.append(name, s);
+      box.append(link);
+    }
+  });
+}
+
+const select = document.getElementById("lang");
+for (const [code, l] of Object.entries(LANGS)) select.add(new Option(l.name, code, false, code === lang));
+select.addEventListener("change", () => {
+  lang = select.value;
+  localStorage.setItem("ft.lang", lang);
+  render();
+});
+
+render();
+fetch(`https://api.github.com/repos/${REPO}/releases/latest`)
+  .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+  .then((r) => {
+    release = r;
+    render();
+  })
+  .catch(() => {});
+</script>
+</body>
+</html>

@@ -35,6 +35,7 @@
 </p>
 
 <p align="center">
+  <a href="https://myfreeze-art.github.io/FishTorrnet/">Website</a> ·
   <a href="#download">Download</a> ·
   <a href="#features">Features</a> ·
   <a href="#build-from-source">Build</a> ·
@@ -79,7 +80,7 @@
 
 ## Download
 
-Get the latest version on the [Releases](https://github.com/myfreeze-art/FishTorrnet/releases/latest) page.
+Open the [download page](https://myfreeze-art.github.io/FishTorrnet/): it picks the right file for your system. All files are also on the [Releases](https://github.com/myfreeze-art/FishTorrnet/releases/latest) page.
 
 | System | How to install |
 | --- | --- |
