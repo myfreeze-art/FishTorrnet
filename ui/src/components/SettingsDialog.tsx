@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api, type Language, type Settings, type Theme } from "../api";
-import { useI18n, type Key } from "../i18n";
+import { LANG_CODES, LOCALES, useI18n, type Key } from "../i18n";
 import { Alert, Folder, Gear } from "../icons";
 import { Dialog } from "./Dialog";
 import { useToast } from "./Toasts";
@@ -212,13 +212,19 @@ export function SettingsDialog({ canPickFolder, initialSection, onClose, onSaved
             </div>
             <div className="field">
               <span className="label">{i.t("language")}</span>
-              <div className="segmented">
-                {(["ru", "en"] as Language[]).map((l) => (
-                  <button key={l} className={s.language === l ? "on" : ""} onClick={() => set("language", l)}>
-                    {l === "ru" ? "Русский" : "English"}
-                  </button>
+              <select
+                className="input"
+                style={{ maxWidth: 280 }}
+                value={s.language}
+                onChange={(e) => set("language", e.target.value as Language)}
+              >
+                <option value="auto">{i.t("languageAuto")}</option>
+                {LANG_CODES.map((code) => (
+                  <option key={code} value={code}>
+                    {LOCALES[code].name}
+                  </option>
                 ))}
-              </div>
+              </select>
             </div>
           </>
         )}

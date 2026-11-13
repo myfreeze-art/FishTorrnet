@@ -10,7 +10,7 @@ export type Status =
   | "paused"
   | "error";
 export type Theme = "system" | "dark" | "light";
-export type Language = "ru" | "en";
+export type Language = "auto" | "en" | "ru" | "uk" | "de" | "fr" | "es" | "pt" | "zh" | "ja" | "tr";
 
 export interface Torrent {
   id: number;

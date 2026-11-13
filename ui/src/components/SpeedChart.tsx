@@ -10,9 +10,9 @@ function niceMax(v: number): number {
   return s * 1024 * 1024;
 }
 
-function label(bytes: number, lang: "ru" | "en") {
+function label(bytes: number, intl: string) {
   const mb = bytes / (1024 * 1024);
-  return mb.toLocaleString(lang === "ru" ? "ru-RU" : "en-US", { maximumFractionDigits: mb < 1 ? 1 : 0 });
+  return mb.toLocaleString(intl, { maximumFractionDigits: mb < 1 ? 1 : 0 });
 }
 
 export function SpeedChart({ series }: { series: Series }) {
@@ -58,7 +58,7 @@ export function SpeedChart({ series }: { series: Series }) {
           <g key={f}>
             <line x1={0} x2={w} y1={y(max * f)} y2={y(max * f)} stroke="var(--line)" />
             <text x={size.w} y={y(max * f) + 4} textAnchor="end">
-              {label(max * f, i.lang)}
+              {label(max * f, i.locale)}
             </text>
           </g>
         ))}

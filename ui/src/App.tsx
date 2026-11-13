@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import { ApiError, api, type AppState, type FileView, type Torrent } from "./api";
 import { bytes } from "./format";
-import { I18nContext, makeI18n } from "./i18n";
+import { I18nContext, makeI18n, resolveLanguage } from "./i18n";
 import { MagnetIcon, PauseIcon, Play, Plus, Search, Trash } from "./icons";
 import { AddDialog, type AddSource } from "./components/AddDialog";
 import { DeleteDialog } from "./components/DeleteDialog";
@@ -63,7 +63,10 @@ export function App() {
   const searchRef = useRef<HTMLInputElement>(null);
   const pendingWatch = useRef<{ id: number; file: number } | null>(null);
 
-  const i18n = useMemo(() => makeI18n(state?.language ?? (localStorage.getItem("fishtorrnet.lang") === "en" ? "en" : "ru")), [state?.language]);
+  const i18n = useMemo(
+    () => makeI18n(resolveLanguage(state?.language ?? localStorage.getItem("fishtorrnet.lang"))),
+    [state?.language],
+  );
   const theme: Resolved = useMemo(() => {
     const t = state?.theme ?? (localStorage.getItem("fishtorrnet.theme") as AppState["theme"] | null) ?? "system";
     return t === "system" ? systemPref : t;

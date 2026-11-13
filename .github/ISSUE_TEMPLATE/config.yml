@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security problem
+    url: https://github.com/myfreeze-art/FishTorrnet/security/advisories/new
+    about: Report vulnerabilities privately, not in public issues.
+  - name: Translations
+    url: https://github.com/myfreeze-art/FishTorrnet/blob/main/docs/TRANSLATING.md
+    about: How to improve or add a language.

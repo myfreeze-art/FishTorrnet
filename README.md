@@ -1,119 +1,122 @@
-# FishTorrnet
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg">
+    <img src="assets/logo-light.svg" width="112" height="112" alt="FishTorrnet">
+  </picture>
+</p>
 
-Быстрый и честный BitTorrent-клиент. Без рекламы, без телеметрии, с открытым кодом.
+<h1 align="center">FishTorrnet</h1>
 
-![Главное окно, тёмная тема](docs/screenshots/main-dark.png)
+<p align="center">
+  <b>A fast and honest BitTorrent client.</b><br>
+  No ads. No telemetry. Open source.
+</p>
 
-## Возможности
+<p align="center">
+  <a href="https://github.com/myfreeze-art/FishTorrnet/releases/latest"><img src="https://img.shields.io/github/v/release/myfreeze-art/FishTorrnet?style=flat-square&color=ff6a3d&label=release" alt="Latest release"></a>
+  <a href="https://github.com/myfreeze-art/FishTorrnet/releases"><img src="https://img.shields.io/github/downloads/myfreeze-art/FishTorrnet/total?style=flat-square&color=2f7bff" alt="Downloads"></a>
+  <a href="https://github.com/myfreeze-art/FishTorrnet/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/myfreeze-art/FishTorrnet/ci.yml?branch=main&style=flat-square&label=CI" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/myfreeze-art/FishTorrnet?style=flat-square&color=34c77b" alt="License"></a>
+  <img src="https://img.shields.io/badge/platforms-Windows%20%7C%20macOS%20%7C%20Linux%20%7C%20Docker-6c6c75?style=flat-square" alt="Platforms">
+  <img src="https://img.shields.io/badge/languages-10-a77bf3?style=flat-square" alt="10 languages">
+</p>
 
-- **Обычный BitTorrent.** Magnet-ссылки, .torrent-файлы, трекеры, DHT, PEX, uTP, UPnP и поиск пиров в локальной сети. FishTorrnet работает в той же сети, что qBittorrent, Transmission и другие клиенты.
-- **Просмотр во время загрузки.** Видео и музыка открываются во встроенном плеере сразу: нужные куски скачиваются первыми. Ссылку на поток можно открыть в VLC.
-- **FishGuard.** Перед загрузкой клиент проверяет список файлов. Он находит двойные расширения вроде `video.mp4.exe`, скрытые символы, которые переворачивают имя файла, программы и «кодеки» внутри раздач с фильмами, ярлыки и файлы с паролями к архивам. Опасную раздачу нельзя добавить, пока пользователь не подтвердит риск.
-- **Управление с телефона.** Включите удалённый доступ в настройках и отсканируйте QR-код. Интерфейс подстраивается под маленький экран.
-- **Импорт из qBittorrent и uTorrent.** Раздачи переносятся вместе с папками, скачанные файлы проверяются и продолжают раздаваться.
-- **Тёмная и светлая тема** со своим логотипом для каждой, русский и английский язык.
-- **Ограничение скорости** загрузки и отдачи без перезапуска.
+<p align="center">
+  <b>English</b> ·
+  <a href="docs/i18n/README.ru.md">Русский</a> ·
+  <a href="docs/i18n/README.uk.md">Українська</a> ·
+  <a href="docs/i18n/README.de.md">Deutsch</a> ·
+  <a href="docs/i18n/README.fr.md">Français</a> ·
+  <a href="docs/i18n/README.es.md">Español</a> ·
+  <a href="docs/i18n/README.pt-BR.md">Português</a> ·
+  <a href="docs/i18n/README.zh-CN.md">简体中文</a> ·
+  <a href="docs/i18n/README.ja.md">日本語</a> ·
+  <a href="docs/i18n/README.tr.md">Türkçe</a>
+</p>
 
-| Светлая тема | Проверка FishGuard | Телефон |
-| --- | --- | --- |
-| ![Светлая тема](docs/screenshots/main-light.png) | ![FishGuard](docs/screenshots/add-fishguard.png) | ![Телефон](docs/screenshots/mobile.png) |
+<p align="center">
+  <a href="#download">Download</a> ·
+  <a href="#features">Features</a> ·
+  <a href="#build-from-source">Build</a> ·
+  <a href="CONTRIBUTING.md">Contribute</a>
+</p>
 
-## Установка
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="docs/screenshots/main-light.png">
+    <img src="docs/screenshots/main-dark.png" width="900" alt="FishTorrnet main window">
+  </picture>
+</p>
 
-Готовые сборки лежат на странице [Releases](https://github.com/myfreeze-art/FishTorrnet/releases).
+## Features
 
-| Система | Как установить |
+- **Watch while it downloads.** Videos and music start playing right away in the built-in player, because the pieces you need are fetched first. You can also open the stream in VLC.
+- **FishGuard.** Every torrent is checked before it starts. FishTorrnet catches double extensions like `video.mp4.exe`, hidden characters that flip a file name, programs and fake codecs inside movie torrents, ad shortcuts and password files. A dangerous torrent cannot be added until you confirm the risk.
+- **Control from your phone.** Turn on remote access and scan the QR code. The interface adapts to small screens.
+- **Move in with one click.** Import your torrents from qBittorrent and uTorrent together with their folders. Downloaded files are verified and keep seeding.
+- **Plain BitTorrent.** Magnet links, .torrent files, trackers, DHT, PEX, uTP, UPnP and local peer discovery. FishTorrnet shares the same swarm as qBittorrent, Transmission and every other client.
+- **Looks right everywhere.** Dark and light themes with a matching logo, 10 interface languages that follow your system, speed limits without a restart.
+
+| | FishTorrnet | qBittorrent | Transmission |
+| --- | :---: | :---: | :---: |
+| No ads, open source | Yes | Yes | Yes |
+| Built-in player while downloading | Yes | Sequential download only | No |
+| Malware check before download | Yes | No | No |
+| Phone control with a QR code | Yes | Web UI | Web UI |
+| Import from other clients | Yes | No | No |
+| Headless server and Docker image | Yes | Yes | Yes |
+
+<table>
+  <tr>
+    <td width="62%"><img src="docs/screenshots/add-fishguard.png" alt="FishGuard warns about malware"></td>
+    <td width="38%"><img src="docs/screenshots/mobile.png" alt="Phone interface"></td>
+  </tr>
+  <tr>
+    <td align="center">FishGuard stops a fake movie with <code>.mp4.exe</code> inside</td>
+    <td align="center">The same downloads on a phone</td>
+  </tr>
+</table>
+
+## Download
+
+Get the latest version on the [Releases](https://github.com/myfreeze-art/FishTorrnet/releases/latest) page.
+
+| System | How to install |
 | --- | --- |
-| Windows | `FishTorrnet_*_x64-setup.exe` из выпуска или `winget install myfreeze-art.FishTorrnet` |
-| macOS | `FishTorrnet_*_universal.dmg` из выпуска |
-| Ubuntu, Debian | `.deb` из выпуска |
-| Fedora, openSUSE | `.rpm` из выпуска |
+| Windows 10 and 11 | `FishTorrnet_x64-setup.exe` or `winget install myfreeze-art.FishTorrnet` |
+| macOS 11 and newer | `FishTorrnet_universal.dmg`, works on Intel and Apple Silicon |
+| Ubuntu, Debian, Mint | `.deb` package |
+| Fedora, openSUSE | `.rpm` package |
 | Arch Linux | `yay -S fishtorrnet-bin` |
-| Любой Linux | `.AppImage` из выпуска |
-| Сервер или NAS | `docker run -p 8787:8787 -v ./downloads:/downloads ghcr.io/myfreeze-art/fishtorrnet` |
+| Any Linux | `.AppImage` |
+| Server or NAS | `docker run -p 8787:8787 -v ./downloads:/downloads ghcr.io/myfreeze-art/fishtorrnet` |
 
-Установщики не подписаны платным сертификатом, поэтому при первом запуске система предупредит один раз. В Windows нажмите «Подробнее», затем «Выполнить в любом случае». В macOS откройте «Системные настройки → Конфиденциальность и безопасность» и нажмите «Всё равно открыть». Контрольные суммы всех файлов лежат в `SHA256SUMS.txt` в каждом выпуске.
+FishTorrnet is free, so the installers are not signed with a paid certificate, and your system will warn you once. On Windows click **More info**, then **Run anyway**. On macOS open **System Settings**, go to **Privacy & Security** and click **Open Anyway**. Every release comes with `SHA256SUMS.txt`, so you can check that a file has not been changed.
 
-Как выпускать версии и публиковать программу в Microsoft Store, winget, AUR, Flathub и Docker, описано в [packaging/README.md](packaging/README.md).
+## Languages
 
-## Сборка из исходников
+The app speaks English, Русский, Українська, Deutsch, Français, Español, Português, 简体中文, 日本語 and Türkçe. It picks the language of your system, and you can change it in **Settings → Interface**. Want to add yours? See [docs/TRANSLATING.md](docs/TRANSLATING.md).
 
-Нужны Rust 1.85 или новее и Node.js 20 или новее.
+## Build from source
 
-На Linux дополнительно нужны системные библиотеки:
-
-```sh
-sudo apt install libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
-```
-
-Настольное приложение:
+You need Rust 1.85+ and Node.js 20+. On Linux, install the WebKitGTK development packages first (see [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)).
 
 ```sh
-npm ci
-npm ci --prefix ui
+git clone https://github.com/myfreeze-art/FishTorrnet.git
+cd FishTorrnet
+npm ci && npm ci --prefix ui
 npm run app:build
 ```
 
-Установщики появятся в `target/release/bundle`.
+Installers end up in `target/release/bundle`. To run without a window on a server, use `cargo build --release -p fishtorrnet-server`.
 
-Сервер без окна, например для домашнего сервера или NAS:
+## Documentation
 
-```sh
-npm ci --prefix ui
-npm --prefix ui run build
-cargo build --release -p fishtorrnet-server
-./target/release/fishtorrnet-server --listen 0.0.0.0:8787 --download-dir ~/Downloads/FishTorrnet
-```
+- [Development, project layout and HTTP API](docs/DEVELOPMENT.md)
+- [Releases and publishing to stores](packaging/README.md)
+- [Translating the app](docs/TRANSLATING.md)
+- [Contributing](CONTRIBUTING.md) and [security policy](SECURITY.md)
 
-Сервер напечатает ссылку с ключом доступа. Откройте её в браузере на любом устройстве в сети.
+## License
 
-## Разработка
-
-```sh
-cargo run -p fishtorrnet-server -- --listen 127.0.0.1:8787
-npm --prefix ui run dev
-```
-
-Интерфейс откроется на `http://localhost:5173`, запросы к `/api` уйдут в запущенный сервер. Ключ доступа лежит в файле `token` в папке настроек: на Linux это `~/.config/FishTorrnet`, на macOS `~/Library/Application Support/FishTorrnet`, на Windows `%APPDATA%\FishTorrnet`. Откройте `http://localhost:5173/?t=КЛЮЧ`.
-
-Тесты:
-
-```sh
-cargo test --workspace
-```
-
-Интеграционный тест `crates/engine/tests/swarm.rs` запускает два клиента, раздаёт файл с одного на другой, проверяет потоковое чтение с середины файла и сверяет скачанные данные.
-
-## Устройство проекта
-
-| Папка | Что внутри |
-| --- | --- |
-| `crates/engine` | Ядро: сессия librqbit, настройки, FishGuard, импорт, HTTP API, потоковая отдача файлов |
-| `crates/server` | Сервер без окна |
-| `src-tauri` | Настольное приложение на Tauri: окно, выбор папки, magnet-ссылки и .torrent-файлы из системы |
-| `ui` | Интерфейс на React и TypeScript |
-| `assets` | Логотипы в SVG |
-| `packaging` | Описания для Microsoft Store, winget, AUR и Flathub, файл .desktop для Linux |
-| `vendor/librqbit-tracker-comms` | Копия модуля трекеров librqbit с запасным IPv4-сокетом для систем без IPv6 |
-
-Ядро и интерфейс общаются через HTTP API на `127.0.0.1`. Каждый запрос должен содержать ключ доступа в заголовке `x-fishtorrnet-token` или в параметре `t`. Действия с файлами на компьютере, например открыть папку, доступны только из окна самого приложения.
-
-## API
-
-| Метод | Путь | Назначение |
-| --- | --- | --- |
-| GET | `/api/state` | Список раздач и состояние сессии |
-| GET, PUT | `/api/settings` | Настройки |
-| POST | `/api/preview` | Получить список файлов и отчёт FishGuard по magnet-ссылке или .torrent |
-| POST | `/api/add` | Добавить раздачу |
-| GET, DELETE | `/api/torrents/{id}` | Подробности, удаление (`?files=true` удаляет файлы) |
-| POST | `/api/torrents/{id}/pause`, `/resume` | Пауза и продолжение |
-| POST | `/api/torrents/{id}/files` | Выбрать файлы для загрузки |
-| GET | `/api/torrents/{id}/peers`, `/pieces` | Пиры и карта кусков |
-| GET | `/api/torrents/{id}/stream/{file}` | Поток файла с поддержкой Range |
-| GET, POST | `/api/import` | Найти и импортировать раздачи qBittorrent или uTorrent |
-| GET | `/api/remote` | Адреса и QR-код для телефона |
-
-## Лицензия
-
-GPL-3.0-or-later, текст в файле [LICENSE](LICENSE). Ядро BitTorrent: [librqbit](https://github.com/ikatson/rqbit), Apache-2.0.
+FishTorrnet is free software under the [GNU GPL v3 or later](LICENSE). The BitTorrent core is [librqbit](https://github.com/ikatson/rqbit) (Apache-2.0).

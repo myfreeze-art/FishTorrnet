@@ -1,19 +1,14 @@
-import type { Language } from "./api";
+import { fill, locale, type LangCode } from "./i18n";
 
-const UNITS: Record<Language, string[]> = {
-  ru: ["Б", "КБ", "МБ", "ГБ", "ТБ"],
-  en: ["B", "KB", "MB", "GB", "TB"],
-};
-
-function num(n: number, lang: Language, digits: number) {
-  return n.toLocaleString(lang === "ru" ? "ru-RU" : "en-US", {
+function num(n: number, lang: LangCode, digits: number) {
+  return n.toLocaleString(locale(lang).intl, {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   });
 }
 
-export function splitBytes(bytes: number, lang: Language): [string, string] {
-  const u = UNITS[lang];
+export function splitBytes(bytes: number, lang: LangCode): [string, string] {
+  const u = locale(lang).units;
   let i = 0;
   let v = bytes;
   while (v >= 1024 && i < u.length - 1) {
@@ -24,17 +19,17 @@ export function splitBytes(bytes: number, lang: Language): [string, string] {
   return [num(v, lang, digits), u[i]];
 }
 
-export function bytes(n: number, lang: Language): string {
+export function bytes(n: number, lang: LangCode): string {
   const [v, u] = splitBytes(n, lang);
   return `${v} ${u}`;
 }
 
-export function speedParts(bps: number, lang: Language): [string, string] {
+export function speedParts(bps: number, lang: LangCode): [string, string] {
   const [v, u] = splitBytes(bps, lang);
-  return [v, lang === "ru" ? `${u}/с` : `${u}/s`];
+  return [v, u + locale(lang).perSecond];
 }
 
-export function speed(bps: number, lang: Language): string {
+export function speed(bps: number, lang: LangCode): string {
   const [v, u] = speedParts(bps, lang);
   return `${v} ${u}`;
 }
@@ -44,19 +39,17 @@ export function percent(done: number, total: number): number {
   return Math.min(100, Math.floor((done / total) * 100));
 }
 
-export function duration(secs: number, lang: Language): string {
-  const ru = lang === "ru";
-  if (secs < 60) return ru ? "< 1 мин" : "< 1 min";
+export function duration(secs: number, lang: LangCode): string {
+  const d = locale(lang).duration;
+  if (secs < 60) return d.lessMin;
   const m = Math.round(secs / 60);
-  if (m < 60) return ru ? `${m} мин` : `${m} min`;
+  if (m < 60) return fill(d.min, { m });
   const h = Math.floor(m / 60);
-  const mm = m % 60;
-  if (h < 24) return ru ? `${h} ч ${mm} мин` : `${h} h ${mm} min`;
-  const d = Math.floor(h / 24);
-  return ru ? `${d} д ${h % 24} ч` : `${d} d ${h % 24} h`;
+  if (h < 24) return fill(d.hourMin, { h, m: m % 60 });
+  return fill(d.dayHour, { d: Math.floor(h / 24), h: h % 24 });
 }
 
-export function ratio(r: number, lang: Language): string {
+export function ratio(r: number, lang: LangCode): string {
   return num(r, lang, 2);
 }
 

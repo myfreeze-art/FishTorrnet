@@ -244,6 +244,13 @@ button {
   color: var(--accent);
 }
 
+.nav-item > span:not(.count):not(.swatch) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .nav-item .count {
   margin-left: auto;
   color: var(--text-3);
