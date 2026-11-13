@@ -54,11 +54,51 @@
     },
     "macOS": {
       "signingIdentity": "-",
-      "minimumSystemVersion": "11.0"
+      "minimumSystemVersion": "11.0",
+      "dmg": {
+        "background": "../packaging/branding/dmg-background.png",
+        "windowSize": {
+          "width": 660,
+          "height": 400
+        },
+        "appPosition": {
+          "x": 180,
+          "y": 190
+        },
+        "applicationFolderPosition": {
+          "x": 480,
+          "y": 190
+        }
+      }
     },
     "windows": {
       "webviewInstallMode": {
         "type": "downloadBootstrapper"
+      },
+      "nsis": {
+        "installMode": "currentUser",
+        "displayLanguageSelector": true,
+        "languages": [
+          "English",
+          "Russian",
+          "Ukrainian",
+          "German",
+          "French",
+          "Spanish",
+          "PortugueseBR",
+          "SimpChinese",
+          "Japanese",
+          "Turkish"
+        ],
+        "headerImage": "../packaging/branding/nsis-header.bmp",
+        "sidebarImage": "../packaging/branding/nsis-sidebar.bmp",
+        "installerIcon": "icons/icon.ico",
+        "startMenuFolder": "FishTorrnet",
+        "compression": "lzma"
+      },
+      "wix": {
+        "bannerPath": "../packaging/branding/wix-banner.bmp",
+        "dialogImagePath": "../packaging/branding/wix-dialog.bmp"
       }
     },
     "publisher": "FishTorrnet contributors"
