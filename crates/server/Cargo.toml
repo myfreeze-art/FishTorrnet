@@ -1,0 +1,16 @@
+[package]
+name = "fishtorrnet-server"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "fishtorrnet-server"
+path = "src/main.rs"
+
+[dependencies]
+fishtorrnet-engine.workspace = true
+anyhow.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
