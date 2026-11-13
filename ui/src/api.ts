@@ -167,6 +167,7 @@ export interface Settings {
   remote_port: number;
   theme: Theme;
   language: Language;
+  close_to_tray: boolean;
 }
 
 export interface RemoteInfo {

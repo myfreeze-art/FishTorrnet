@@ -114,6 +114,7 @@ export const ja: Locale = {
     themeLight: "ライト",
     language: "言語",
     languageAuto: "システムに合わせる",
+    closeToTray: "ウィンドウを閉じてもトレイで動作を続ける",
     remoteEnable: "スマホやネットワーク上の他の端末からの操作を許可する",
     remotePort: "Web インターフェースのポート",
     save: "保存",

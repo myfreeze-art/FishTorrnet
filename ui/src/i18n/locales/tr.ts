@@ -114,6 +114,7 @@ export const tr: Locale = {
     themeLight: "Açık",
     language: "Dil",
     languageAuto: "Sistemle aynı",
+    closeToTray: "Pencere kapatılınca sistem tepsisinde çalışmaya devam et",
     remoteEnable: "Telefondan ve ağdaki diğer cihazlardan kontrole izin ver",
     remotePort: "Web arayüzü bağlantı noktası",
     save: "Kaydet",

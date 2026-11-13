@@ -387,26 +387,13 @@ async fn add(State(e): State<Shared>, Json(req): Json<AddRequest>) -> R<Value> {
     ))
 }
 
-fn all_ids(e: &Engine) -> Vec<usize> {
-    e.api
-        .api_torrent_list()
-        .torrents
-        .into_iter()
-        .filter_map(|t| t.id)
-        .collect()
-}
-
 async fn pause_all(State(e): State<Shared>) -> R<Value> {
-    for id in all_ids(&e) {
-        let _ = e.api.api_torrent_action_pause(id.into()).await;
-    }
+    e.pause_all().await;
     Ok(Json(json!({})))
 }
 
 async fn resume_all(State(e): State<Shared>) -> R<Value> {
-    for id in all_ids(&e) {
-        let _ = e.api.api_torrent_action_start(id.into()).await;
-    }
+    e.resume_all().await;
     Ok(Json(json!({})))
 }
 

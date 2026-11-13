@@ -114,6 +114,7 @@ export const ru: Locale = {
     themeLight: "Светлая",
     language: "Язык",
     languageAuto: "Как в системе",
+    closeToTray: "При закрытии окна сворачивать в трей и продолжать загрузку",
     remoteEnable: "Разрешить управление с телефона и других устройств в сети",
     remotePort: "Порт веб-интерфейса",
     save: "Сохранить",

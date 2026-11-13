@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api, type Language, type Settings, type Theme } from "../api";
 import { LANG_CODES, LOCALES, useI18n, type Key } from "../i18n";
 import { Alert, Folder, Gear } from "../icons";
+import { isDesktop } from "../desktop";
 import { Dialog } from "./Dialog";
 import { useToast } from "./Toasts";
 
@@ -226,6 +227,9 @@ export function SettingsDialog({ canPickFolder, initialSection, onClose, onSaved
                 ))}
               </select>
             </div>
+            {isDesktop && (
+              <Toggle checked={s.close_to_tray} onChange={(v) => set("close_to_tray", v)} label={i.t("closeToTray")} />
+            )}
           </>
         )}
         {s && section === "remote" && (

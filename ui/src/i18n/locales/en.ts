@@ -105,6 +105,7 @@ export const strings = {
   themeLight: "Light",
   language: "Language",
   languageAuto: "Same as system",
+  closeToTray: "Keep running in the tray when the window is closed",
   remoteEnable: "Allow control from a phone and other devices on the network",
   remotePort: "Web interface port",
   save: "Save",

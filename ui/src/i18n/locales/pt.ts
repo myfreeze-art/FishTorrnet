@@ -114,6 +114,7 @@ export const pt: Locale = {
     themeLight: "Claro",
     language: "Idioma",
     languageAuto: "Igual ao sistema",
+    closeToTray: "Continuar na bandeja do sistema ao fechar a janela",
     remoteEnable: "Permitir controle pelo celular e por outros dispositivos da rede",
     remotePort: "Porta da interface web",
     save: "Salvar",

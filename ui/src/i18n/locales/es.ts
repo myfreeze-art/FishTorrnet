@@ -114,6 +114,7 @@ export const es: Locale = {
     themeLight: "Claro",
     language: "Idioma",
     languageAuto: "Como el sistema",
+    closeToTray: "Seguir en la bandeja del sistema al cerrar la ventana",
     remoteEnable: "Permitir el control desde el móvil y otros dispositivos de la red",
     remotePort: "Puerto de la interfaz web",
     save: "Guardar",
