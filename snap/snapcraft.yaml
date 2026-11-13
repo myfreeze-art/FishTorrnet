@@ -35,12 +35,6 @@ slots:
     bus: session
     name: io.github.myfreeze-art.fishtorrnet.SingleInstance
 
-plugs:
-  single-instance-plug:
-    interface: dbus
-    bus: session
-    name: io.github.myfreeze-art.fishtorrnet.SingleInstance
-
 apps:
   fishtorrnet:
     command: usr/bin/fishtorrnet
@@ -52,7 +46,6 @@ apps:
       - home
       - removable-media
       - unity7
-      - single-instance-plug
     slots:
       - single-instance
 
