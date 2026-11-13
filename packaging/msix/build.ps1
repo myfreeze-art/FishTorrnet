@@ -12,7 +12,7 @@ New-Item -ItemType Directory -Force (Join-Path $layout "Assets") | Out-Null
 
 Copy-Item (Join-Path $root "target\release\fishtorrnet.exe") (Join-Path $layout "FishTorrnet.exe")
 $icons = Join-Path $root "src-tauri\icons"
-foreach ($name in "StoreLogo.png", "Square44x44Logo.png", "Square150x150Logo.png", "Square310x310Logo.png") {
+foreach ($name in "StoreLogo.png", "Square44x44Logo.png", "Square150x150Logo.png") {
   Copy-Item (Join-Path $icons $name) (Join-Path $layout "Assets\$name")
 }
 

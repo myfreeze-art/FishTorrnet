@@ -133,6 +133,7 @@ jobs:
 
   checksums:
     needs: [desktop, server]
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
