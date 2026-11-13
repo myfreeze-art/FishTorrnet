@@ -13,6 +13,8 @@ import { SettingsDialog } from "./components/SettingsDialog";
 import { Sidebar } from "./components/Sidebar";
 import { StatusBar } from "./components/StatusBar";
 import { useToast } from "./components/Toasts";
+import { WindowControls } from "./components/WindowControls";
+import { isDesktop, isMac } from "./desktop";
 import { TorrentTable } from "./components/TorrentTable";
 import { matches, pushSample, type Filter, type Series } from "./ui";
 
@@ -67,6 +69,10 @@ export function App() {
     return t === "system" ? systemPref : t;
   }, [state?.theme, systemPref]);
   const logo = theme === "dark" ? "/logo-dark.svg" : "/logo-light.svg";
+
+  useEffect(() => {
+    if (isDesktop) document.documentElement.classList.add("desktop", isMac ? "mac" : "frameless");
+  }, []);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -322,7 +328,7 @@ export function App() {
           onSettings={() => setSettingsOpen(true)}
         />
         <main className="main">
-          <div className="toolbar">
+          <div className="toolbar" data-tauri-drag-region>
             <button className="btn primary" onClick={() => setAdding(null)}>
               <Plus />
               <span className="hide-sm">{i.t("add")}</span>
@@ -364,11 +370,12 @@ export function App() {
                   }
                 }}
               />
-              <span className="kbd">{navigator.platform.includes("Mac") ? "⌘K" : "Ctrl K"}</span>
+              <span className="kbd">{isMac ? "⌘K" : "Ctrl K"}</span>
             </label>
+            {isDesktop && !isMac && <WindowControls />}
           </div>
 
-          <div className="header">
+          <div className="header" data-tauri-drag-region>
             <h1>{title}</h1>
             <span className="muted num">
               {i.torrents(visible.length)} · {bytes(totalBytes, i.lang)}

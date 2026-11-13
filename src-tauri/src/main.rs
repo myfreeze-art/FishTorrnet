@@ -97,11 +97,19 @@ fn main() -> anyhow::Result<()> {
             let url = engine.local_url(addr).parse()?;
             app.manage(engine);
 
-            WebviewWindowBuilder::new(app, "main", WebviewUrl::External(url))
+            let window = WebviewWindowBuilder::new(app, "main", WebviewUrl::External(url))
                 .title("FishTorrnet")
                 .inner_size(1360.0, 860.0)
                 .min_inner_size(960.0, 600.0)
-                .build()?;
+                .disable_drag_drop_handler();
+            #[cfg(target_os = "macos")]
+            let window = window
+                .title_bar_style(tauri::TitleBarStyle::Overlay)
+                .hidden_title(true)
+                .traffic_light_position(tauri::LogicalPosition::new(18.0, 18.0));
+            #[cfg(not(target_os = "macos"))]
+            let window = window.decorations(false).shadow(true);
+            window.build()?;
             Ok(())
         })
         .build(tauri::generate_context!())?;

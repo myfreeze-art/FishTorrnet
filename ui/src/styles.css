@@ -140,6 +140,50 @@ button {
   font-size: 14px;
 }
 
+.mac .brand {
+  padding-left: 72px;
+}
+
+.desktop .toolbar,
+.desktop .header,
+.desktop .brand {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.frameless .toolbar {
+  padding-right: 0;
+}
+
+.frameless .search {
+  margin-right: 8px;
+}
+
+.window-controls {
+  display: flex;
+  align-self: stretch;
+  margin-left: 8px;
+}
+
+.wc {
+  width: 46px;
+  border: 0;
+  background: transparent;
+  color: var(--text-2);
+  display: grid;
+  place-content: center;
+}
+
+.wc:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.wc.close:hover {
+  background: #e81123;
+  color: #fff;
+}
+
 .brand img {
   width: 24px;
   height: 24px;
