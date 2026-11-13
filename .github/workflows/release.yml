@@ -18,11 +18,22 @@ jobs:
       id: ${{ steps.release.outputs.id }}
     steps:
       - uses: actions/checkout@v4
+      - name: Check tag
+        run: python3 packaging/set-version.py "$TAG"
       - id: release
         run: |
-          gh release create "$TAG" --draft --verify-tag \
-            --title "FishTorrnet $TAG" --notes-file packaging/release-notes.md
-          id=$(gh api "repos/${{ github.repository }}/releases" --jq ".[] | select(.tag_name == \"$TAG\") | .id" | head -n1)
+          find_release() {
+            gh api "repos/${{ github.repository }}/releases" --paginate \
+              --jq ".[] | select(.tag_name == \"$TAG\") | .id" | head -n1
+          }
+          id=$(find_release)
+          if [ -z "$id" ]; then
+            gh release create "$TAG" --draft --verify-tag \
+              --title "FishTorrnet $TAG" --notes-file packaging/release-notes.md
+            id=$(find_release)
+          elif [ -z "$(gh release view "$TAG" --json body --jq .body)" ]; then
+            gh release edit "$TAG" --notes-file packaging/release-notes.md
+          fi
           echo "id=$id" >> "$GITHUB_OUTPUT"
 
   desktop:
@@ -52,6 +63,11 @@ jobs:
         with:
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
       - uses: Swatinem/rust-cache@v2
+      - name: Set version from tag
+        shell: bash
+        run: |
+          (python3 --version >/dev/null 2>&1 && python3 packaging/set-version.py "$TAG") || python packaging/set-version.py "$TAG"
+          cargo update --workspace
       - name: Dependencies
         run: |
           npm ci
@@ -99,6 +115,11 @@ jobs:
           node-version: 22
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
+      - name: Set version from tag
+        shell: bash
+        run: |
+          (python3 --version >/dev/null 2>&1 && python3 packaging/set-version.py "$TAG") || python packaging/set-version.py "$TAG"
+          cargo update --workspace
       - name: Build
         shell: bash
         run: |

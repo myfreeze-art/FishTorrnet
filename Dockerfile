@@ -12,7 +12,7 @@ COPY crates crates
 COPY vendor vendor
 COPY src-tauri src-tauri
 COPY --from=ui /src/ui/dist ui/dist
-RUN cargo build --release --locked -p fishtorrnet-server
+RUN cargo update --workspace && cargo build --release --locked -p fishtorrnet-server
 
 FROM debian:bookworm-slim
 RUN apt-get update \
