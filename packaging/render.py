@@ -54,6 +54,7 @@ def main() -> None:
     flatpak = out / "flatpak"
     render(HERE / "flatpak/io.github.myfreeze_art.FishTorrnet.yml.in", flatpak / "io.github.myfreeze_art.FishTorrnet.yml", values)
     shutil.copy(HERE / "flatpak/io.github.myfreeze_art.FishTorrnet.metainfo.xml", flatpak)
+    shutil.copy(HERE / "flatpak/flathub.json", flatpak)
 
     print(out)
 

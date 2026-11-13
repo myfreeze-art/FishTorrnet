@@ -135,14 +135,6 @@ jobs:
   checksums:
     needs: [desktop, server]
     if: ${{ !cancelled() }}
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v5
-      - name: Checksums and store manifests
-        run: |
-          mkdir assets
-          gh release download "$TAG" --dir assets --skip-existing
-          (cd assets && rm -f SHA256SUMS.txt && sha256sum * > ../SHA256SUMS.txt)
-          python3 packaging/render.py --version "$TAG" --assets assets --out store
-          (cd store && zip -qr "../fishtorrnet-${TAG}-store-manifests.zip" .)
-          gh release upload "$TAG" SHA256SUMS.txt "fishtorrnet-${TAG}-store-manifests.zip" --clobber
+    uses: ./.github/workflows/checksums.yml
+    with:
+      tag: ${{ github.ref_name }}

@@ -1,0 +1,37 @@
+name: Checksums
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag, for example v0.2.2
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  checksums:
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TAG: ${{ inputs.tag }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Checksums and store manifests
+        run: |
+          dir="$RUNNER_TEMP/release-files"
+          out="$RUNNER_TEMP/store"
+          mkdir -p "$dir"
+          gh release download "$TAG" --dir "$dir" --skip-existing
+          rm -f "$dir/SHA256SUMS.txt" "$dir"/fishtorrnet-*-store-manifests.zip
+          (cd "$dir" && sha256sum * > "$RUNNER_TEMP/SHA256SUMS.txt")
+          python3 packaging/render.py --version "$TAG" --assets "$dir" --out "$out"
+          (cd "$out" && zip -qr "$RUNNER_TEMP/fishtorrnet-${TAG}-store-manifests.zip" .)
+          gh release upload "$TAG" "$RUNNER_TEMP/SHA256SUMS.txt" "$RUNNER_TEMP/fishtorrnet-${TAG}-store-manifests.zip" --clobber
