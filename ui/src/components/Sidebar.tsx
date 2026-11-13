@@ -30,8 +30,8 @@ export function Sidebar({ logo, version, torrents, filter, onFilter, onRemote, o
   const errors = count("errors");
 
   return (
-    <aside className="sidebar">
-      <div className="brand">
+    <aside className="sidebar" data-tauri-drag-region>
+      <div className="brand" data-tauri-drag-region>
         <img src={logo} alt="" />
         <span>FishTorrnet</span>
         <span className="ver">{version}</span>
