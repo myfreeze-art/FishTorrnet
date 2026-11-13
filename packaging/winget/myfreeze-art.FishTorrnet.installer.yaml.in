@@ -1,0 +1,22 @@
+PackageIdentifier: myfreeze-art.FishTorrnet
+PackageVersion: {{VERSION}}
+Platform:
+  - Windows.Desktop
+MinimumOSVersion: 10.0.17763.0
+InstallerType: wix
+Scope: machine
+InstallModes:
+  - interactive
+  - silent
+  - silentWithProgress
+UpgradeBehavior: install
+Protocols:
+  - magnet
+FileExtensions:
+  - torrent
+Installers:
+  - Architecture: x64
+    InstallerUrl: https://github.com/myfreeze-art/FishTorrnet/releases/download/v{{VERSION}}/FishTorrnet_{{VERSION}}_x64_en-US.msi
+    InstallerSha256: {{SHA_MSI}}
+ManifestType: installer
+ManifestVersion: 1.9.0

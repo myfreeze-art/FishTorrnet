@@ -6,22 +6,31 @@ use fishtorrnet_engine::{Engine, Options, default_config_dir};
 
 struct Args {
     config_dir: PathBuf,
+    download_dir: Option<PathBuf>,
     listen: SocketAddr,
 }
 
-const USAGE: &str = "Usage: fishtorrnet-server [--config-dir DIR] [--listen ADDR:PORT]
+const USAGE: &str =
+    "Usage: fishtorrnet-server [--config-dir DIR] [--download-dir DIR] [--listen ADDR:PORT]
 
 Runs FishTorrnet without a window and serves the web interface.
 
 Options:
   --config-dir DIR     Folder for settings and session state
+  --download-dir DIR   Default download folder on first start
   --listen ADDR:PORT   Address of the web interface (default 127.0.0.1:8787)
   -h, --help           Show this help";
 
 fn parse_args() -> anyhow::Result<Args> {
     let mut args = Args {
-        config_dir: default_config_dir(),
-        listen: "127.0.0.1:8787".parse()?,
+        config_dir: std::env::var_os("FISHTORRNET_CONFIG_DIR")
+            .map(PathBuf::from)
+            .unwrap_or_else(default_config_dir),
+        download_dir: std::env::var_os("FISHTORRNET_DOWNLOAD_DIR").map(PathBuf::from),
+        listen: std::env::var("FISHTORRNET_LISTEN")
+            .unwrap_or_else(|_| "127.0.0.1:8787".into())
+            .parse()
+            .context("FISHTORRNET_LISTEN must look like 0.0.0.0:8787")?,
     };
     let mut it = std::env::args().skip(1);
     while let Some(a) = it.next() {
@@ -60,6 +69,7 @@ async fn main() -> anyhow::Result<()> {
         desktop: false,
         folder_picker: None,
         restart: None,
+        download_dir: args.download_dir,
     })
     .await?;
     let addr = engine.bind(args.listen).await?;

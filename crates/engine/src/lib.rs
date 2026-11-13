@@ -36,6 +36,7 @@ pub struct Options {
     pub desktop: bool,
     pub folder_picker: Option<FolderPicker>,
     pub restart: Option<RestartHook>,
+    pub download_dir: Option<PathBuf>,
 }
 
 pub struct Engine {
@@ -80,7 +81,11 @@ impl Engine {
         let config_dir = opts.config_dir;
         std::fs::create_dir_all(&config_dir)
             .with_context(|| format!("cannot create {}", config_dir.display()))?;
-        let settings = Settings::load(&config_dir.join("settings.json"));
+        let settings_path = config_dir.join("settings.json");
+        let mut settings = Settings::load(&settings_path);
+        if let Some(dir) = opts.download_dir.filter(|_| !settings_path.exists()) {
+            settings.download_folder = dir;
+        }
         let token = load_token(&config_dir.join("token"))?;
         std::fs::create_dir_all(&settings.download_folder)
             .with_context(|| format!("cannot create {}", settings.download_folder.display()))?;

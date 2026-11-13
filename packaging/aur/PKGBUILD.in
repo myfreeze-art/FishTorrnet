@@ -1,0 +1,17 @@
+pkgname=fishtorrnet-bin
+pkgver={{VERSION}}
+pkgrel=1
+pkgdesc="Fast and honest BitTorrent client without ads or telemetry"
+arch=('x86_64')
+url="https://github.com/myfreeze-art/FishTorrnet"
+license=('GPL-3.0-or-later')
+depends=('webkit2gtk-4.1' 'gtk3' 'openssl' 'hicolor-icon-theme')
+provides=('fishtorrnet')
+conflicts=('fishtorrnet')
+options=('!debug' '!strip')
+source=("FishTorrnet_${pkgver}_amd64.deb::https://github.com/myfreeze-art/FishTorrnet/releases/download/v${pkgver}/FishTorrnet_${pkgver}_amd64.deb")
+sha256sums=('{{SHA_DEB}}')
+
+package() {
+  tar -xzf data.tar.gz -C "${pkgdir}"
+}

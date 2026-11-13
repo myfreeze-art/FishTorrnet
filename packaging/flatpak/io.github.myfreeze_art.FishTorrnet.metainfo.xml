@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.myfreeze_art.FishTorrnet</id>
+  <name>FishTorrnet</name>
+  <summary>Fast and honest BitTorrent client</summary>
+  <summary xml:lang="ru">Быстрый и честный BitTorrent-клиент</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <developer id="io.github.myfreeze_art">
+    <name>FishTorrnet contributors</name>
+  </developer>
+  <description>
+    <p>FishTorrnet is an open source BitTorrent client without ads or telemetry.</p>
+    <p xml:lang="ru">FishTorrnet — BitTorrent-клиент с открытым кодом, без рекламы и телеметрии.</p>
+    <ul>
+      <li>Watch videos and listen to music while they download</li>
+      <li xml:lang="ru">Смотрите видео и слушайте музыку прямо во время загрузки</li>
+      <li>FishGuard warns about malware hidden in torrents, such as video.mp4.exe</li>
+      <li xml:lang="ru">FishGuard предупреждает о вирусах в раздачах, например video.mp4.exe</li>
+      <li>Control downloads from your phone with a QR code</li>
+      <li xml:lang="ru">Управление загрузками с телефона по QR-коду</li>
+      <li>Import torrents from qBittorrent and uTorrent</li>
+      <li xml:lang="ru">Импорт раздач из qBittorrent и uTorrent</li>
+      <li>Dark and light themes</li>
+      <li xml:lang="ru">Тёмная и светлая тема</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">io.github.myfreeze_art.FishTorrnet.desktop</launchable>
+  <url type="homepage">https://github.com/myfreeze-art/FishTorrnet</url>
+  <url type="bugtracker">https://github.com/myfreeze-art/FishTorrnet/issues</url>
+  <url type="vcs-browser">https://github.com/myfreeze-art/FishTorrnet</url>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Main window, dark theme</caption>
+      <image>https://raw.githubusercontent.com/myfreeze-art/FishTorrnet/main/docs/screenshots/main-dark.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Main window, light theme</caption>
+      <image>https://raw.githubusercontent.com/myfreeze-art/FishTorrnet/main/docs/screenshots/main-light.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>FishGuard checks a torrent before download</caption>
+      <image>https://raw.githubusercontent.com/myfreeze-art/FishTorrnet/main/docs/screenshots/add-fishguard.png</image>
+    </screenshot>
+  </screenshots>
+  <categories>
+    <category>Network</category>
+    <category>FileTransfer</category>
+    <category>P2P</category>
+  </categories>
+  <keywords>
+    <keyword>torrent</keyword>
+    <keyword>bittorrent</keyword>
+    <keyword>magnet</keyword>
+  </keywords>
+  <provides>
+    <binary>fishtorrnet</binary>
+    <mediatype>application/x-bittorrent</mediatype>
+  </provides>
+  <content_rating type="oars-1.1"/>
+  <branding>
+    <color type="primary" scheme_preference="light">#ffd9cc</color>
+    <color type="primary" scheme_preference="dark">#3a1d14</color>
+  </branding>
+  <releases>
+    <release version="0.1.0" date="2026-11-13">
+      <description>
+        <p>First release.</p>
+      </description>
+    </release>
+  </releases>
+</component>

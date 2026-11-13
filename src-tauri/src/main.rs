@@ -88,6 +88,7 @@ fn main() -> anyhow::Result<()> {
                         .and_then(|p| p.into_path().ok())
                 })),
                 restart: Some(Arc::new(move || restarter.restart())),
+                download_dir: None,
             }))?;
             enqueue(&engine, args.iter().map(String::as_str));
             let addr = tauri::async_runtime::block_on(engine.bind_local(0))?;
