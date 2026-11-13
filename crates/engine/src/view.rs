@@ -148,7 +148,7 @@ pub fn summary(t: &TorrentDetailsResponse, stats: &TorrentStats, level: Level, k
         progress_bytes: stats.progress_bytes,
         total_bytes: stats.total_bytes,
         uploaded_bytes: stats.uploaded_bytes,
-        download_bps: if active { live.map(|l| l.download_speed.as_bytes()).unwrap_or(0) } else { 0 },
+        download_bps: if active && !stats.finished { live.map(|l| l.download_speed.as_bytes()).unwrap_or(0) } else { 0 },
         upload_bps: if active { live.map(|l| l.upload_speed.as_bytes()).unwrap_or(0) } else { 0 },
         peers: live.map(|l| l.snapshot.peer_stats.live).unwrap_or(0),
         seeds: live.map(|l| l.snapshot.peer_stats.live_seeders).unwrap_or(0),

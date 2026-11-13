@@ -29,17 +29,20 @@ use crate::settings::Settings;
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 pub type FolderPicker = Arc<dyn Fn(PathBuf) -> Option<PathBuf> + Send + Sync>;
+pub type RestartHook = Arc<dyn Fn() + Send + Sync>;
 
 pub struct Options {
     pub config_dir: PathBuf,
     pub desktop: bool,
     pub folder_picker: Option<FolderPicker>,
+    pub restart: Option<RestartHook>,
 }
 
 pub struct Engine {
     pub api: Api,
     pub desktop: bool,
     pub folder_picker: Option<FolderPicker>,
+    pub restart: Option<RestartHook>,
     pub started: Instant,
     pub(crate) guard_cache: Mutex<HashMap<String, (Level, Kind)>>,
     config_dir: PathBuf,
@@ -115,6 +118,7 @@ impl Engine {
             api: Api::new(session, None),
             desktop: opts.desktop,
             folder_picker: opts.folder_picker,
+            restart: opts.restart,
             started: Instant::now(),
             guard_cache: Mutex::new(HashMap::new()),
             config_dir,

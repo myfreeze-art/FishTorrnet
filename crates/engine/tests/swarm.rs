@@ -70,6 +70,7 @@ async fn download_stream_and_verify() {
         config_dir: seed_cfg,
         desktop: false,
         folder_picker: None,
+        restart: None,
     })
     .await
     .unwrap();
@@ -77,6 +78,7 @@ async fn download_stream_and_verify() {
         config_dir: leech_cfg,
         desktop: true,
         folder_picker: None,
+        restart: None,
     })
     .await
     .unwrap();

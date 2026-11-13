@@ -90,6 +90,7 @@ pub fn router(engine: Shared) -> Router {
         .route("/api/remote", get(remote))
         .route("/api/import", get(import_detect).post(import_run))
         .route("/api/pick-folder", post(pick_folder))
+        .route("/api/restart", post(restart))
         .route("/api/preview", post(preview))
         .route("/api/add", post(add))
         .route("/api/pause-all", post(pause_all))
@@ -185,6 +186,8 @@ async fn state(State(e): State<Shared>, ConnectInfo(addr): ConnectInfo<SocketAdd
         "session": session,
         "restart_required": e.restart_required(),
         "local": is_local(&e, &addr),
+        "can_pick_folder": is_local(&e, &addr) && e.folder_picker.is_some(),
+        "can_restart": is_local(&e, &addr) && e.restart.is_some(),
         "theme": settings.theme,
         "language": settings.language,
         "upnp": settings.upnp,
@@ -551,6 +554,21 @@ async fn pick_folder(State(e): State<Shared>, ConnectInfo(addr): ConnectInfo<Soc
         .await
         .map_err(|err| bad(err.to_string()))?;
     Ok(Json(json!({ "path": picked })))
+}
+
+async fn restart(State(e): State<Shared>, ConnectInfo(addr): ConnectInfo<SocketAddr>) -> R<Value> {
+    if !is_local(&e, &addr) {
+        return Err(ApiError(StatusCode::FORBIDDEN, "not available in remote mode".into()));
+    }
+    let Some(hook) = e.restart.clone() else {
+        return Err(ApiError(StatusCode::NOT_IMPLEMENTED, "restart is not available".into()));
+    };
+    tokio::spawn(async move {
+        tokio::time::sleep(Duration::from_millis(200)).await;
+        e.shutdown().await;
+        hook();
+    });
+    Ok(Json(json!({})))
 }
 
 async fn import_detect() -> R<Value> {

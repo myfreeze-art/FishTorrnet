@@ -57,6 +57,7 @@ async fn main() -> anyhow::Result<()> {
         config_dir: args.config_dir,
         desktop: false,
         folder_picker: None,
+        restart: None,
     })
     .await?;
     let addr = engine.bind(args.listen).await?;
