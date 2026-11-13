@@ -1,0 +1,88 @@
+name: fishtorrnet
+base: core22
+adopt-info: fishtorrnet
+title: FishTorrnet
+summary: Fast and honest BitTorrent client without ads or telemetry
+description: |
+  FishTorrnet is a free, open source BitTorrent client for people who are tired of ads and clutter.
+
+  - Watch videos and listen to music while they download in the built-in player.
+  - FishGuard checks every torrent before it starts and warns about fake movies like video.mp4.exe, hidden characters in file names and programs inside movie torrents.
+  - Control downloads from your phone: turn on remote access and scan the QR code.
+  - Import torrents from qBittorrent and uTorrent together with their folders.
+  - Keeps downloading in the tray when the window is closed.
+  - Magnet links, DHT, PEX, uTP, UPnP, speed limits, dark and light themes, 10 languages.
+
+  No ads, no telemetry, no accounts. FishTorrnet is a general purpose file sharing tool. Download only content you have the right to download.
+license: GPL-3.0-or-later
+website: https://myfreeze-art.github.io/FishTorrnet/
+source-code: https://github.com/myfreeze-art/FishTorrnet
+issues: https://github.com/myfreeze-art/FishTorrnet/issues
+icon: snap/gui/fishtorrnet.png
+grade: stable
+confinement: strict
+architectures:
+  - build-on: amd64
+  - build-on: arm64
+
+layout:
+  /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/webkit2gtk-4.1:
+    bind: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/webkit2gtk-4.1
+
+slots:
+  single-instance:
+    interface: dbus
+    bus: session
+    name: io.github.myfreeze-art.fishtorrnet.SingleInstance
+
+apps:
+  fishtorrnet:
+    command: usr/bin/fishtorrnet
+    desktop: usr/share/applications/FishTorrnet.desktop
+    extensions: [gnome]
+    plugs:
+      - network
+      - network-bind
+      - home
+      - removable-media
+      - unity7
+    slots:
+      - single-instance
+
+parts:
+  fishtorrnet:
+    plugin: dump
+    source: .
+    build-snaps:
+      - node/22/stable
+      - rustup/latest/stable
+    build-packages:
+      - libwebkit2gtk-4.1-dev
+      - build-essential
+      - curl
+      - file
+      - libxdo-dev
+      - libssl-dev
+      - libayatana-appindicator3-dev
+      - librsvg2-dev
+      - pkg-config
+      - python3
+      - dpkg
+      - git
+    stage-packages:
+      - libwebkit2gtk-4.1-0
+      - libayatana-appindicator3-1
+    override-pull: |
+      craftctl default
+      version="$(git describe --tags --abbrev=0 2>/dev/null || echo v0.0.0)"
+      python3 packaging/set-version.py "$version"
+      craftctl set version="${version#v}"
+    override-build: |
+      set -eu
+      rustup default stable
+      cargo update --workspace
+      npm ci
+      npm ci --prefix ui
+      npm run tauri build -- --bundles deb
+      dpkg -x target/release/bundle/deb/*.deb "$CRAFT_PART_INSTALL/"
+      sed -i -e "s|^Icon=.*|Icon=/usr/share/icons/hicolor/128x128/apps/fishtorrnet.png|" "$CRAFT_PART_INSTALL/usr/share/applications/FishTorrnet.desktop"
